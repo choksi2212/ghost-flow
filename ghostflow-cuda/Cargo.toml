@@ -3,10 +3,17 @@ name = "ghostflow-cuda"
 version = "0.1.0"
 edition = "2021"
 description = "CUDA backend for GhostFlow ML framework"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/choksi2212/ghost-flow"
+homepage = "https://github.com/choksi2212/ghost-flow"
+documentation = "https://docs.rs/ghostflow-cuda"
+keywords = ["cuda", "gpu", "machine-learning", "deep-learning"]
+categories = ["science", "algorithms"]
+readme = "../README.md"
 build = "build.rs"
 
 [dependencies]
-ghostflow-core = { path = "../ghostflow-core" }
+ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
 parking_lot = "0.12"
 
 [build-dependencies]

@@ -3,6 +3,13 @@ name = "ghostflow-core"
 version = "0.1.0"
 edition = "2021"
 description = "Core tensor operations for GhostFlow ML framework - optimized for maximum performance"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/choksi2212/ghost-flow"
+homepage = "https://github.com/choksi2212/ghost-flow"
+documentation = "https://docs.rs/ghostflow-core"
+keywords = ["machine-learning", "tensor", "deep-learning", "neural-network", "simd"]
+categories = ["science", "algorithms"]
+readme = "../README.md"
 
 [features]
 default = ["rayon", "simd"]

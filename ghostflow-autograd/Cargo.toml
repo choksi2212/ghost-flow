@@ -3,6 +3,13 @@ name = "ghostflow-autograd"
 version = "0.1.0"
 edition = "2021"
 description = "Automatic differentiation for GhostFlow ML framework"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/choksi2212/ghost-flow"
+homepage = "https://github.com/choksi2212/ghost-flow"
+documentation = "https://docs.rs/ghostflow-autograd"
+keywords = ["autograd", "differentiation", "machine-learning", "backpropagation"]
+categories = ["science", "algorithms"]
+readme = "../README.md"
 
 [dependencies]
-ghostflow-core = { path = "../ghostflow-core" }
+ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
