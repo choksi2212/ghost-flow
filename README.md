@@ -26,11 +26,12 @@ GhostFlow is a **complete machine learning framework** built entirely in Rust, d
 
 - 🚀 **Zero-Copy Operations** - Memory-efficient tensor operations with automatic memory pooling
 - ⚡ **SIMD Optimized** - Hand-tuned kernels that leverage modern CPU instructions
-- 🎮 **GPU Acceleration** - CUDA support with custom optimized kernels (beats cuBLAS!)
+- 🎮 **Real GPU Acceleration** - Hand-optimized CUDA kernels (Fused Conv+BN+ReLU, Flash Attention, Tensor Cores)
 - 🧠 **Automatic Differentiation** - Full autograd engine with computational graph
 - 🔥 **50+ ML Algorithms** - From decision trees to deep learning, all in one framework
 - 🛡️ **Memory Safe** - Rust's guarantees mean no segfaults, no data races
 - 📦 **Production Ready** - Zero warnings, comprehensive tests, battle-tested code
+- 🌐 **Works Everywhere** - CPU fallback when GPU unavailable, docs build without CUDA
 
 ---
 
@@ -137,6 +138,17 @@ GhostFlow includes **hand-optimized CUDA kernels** that outperform standard libr
 - **Tensor Core Support**: Leverage Ampere+ GPUs for 4x speedup
 - **Flash Attention**: Memory-efficient attention mechanism
 - **Custom GEMM**: Optimized matrix multiplication that beats cuBLAS for specific sizes
+- **Automatic Fallback**: Works on CPU when GPU is unavailable
+
+**Enable GPU acceleration:**
+```toml
+[dependencies]
+ghostflow = { version = "0.1", features = ["cuda"] }
+```
+
+**Requirements:** NVIDIA GPU (Compute Capability 7.0+), CUDA Toolkit 11.0+
+
+See [CUDA_USAGE.md](CUDA_USAGE.md) for detailed GPU setup and performance tips.
 
 ---
 

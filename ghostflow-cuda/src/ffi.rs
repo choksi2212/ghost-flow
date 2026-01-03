@@ -163,6 +163,39 @@ extern "C" {
     pub fn cudaPeekAtLastError() -> cudaError_t;
 }
 
+// Our custom optimized kernels from optimized_kernels.cu
+#[cfg(feature = "cuda")]
+extern "C" {
+    pub fn launch_optimized_sgemm(
+        A: *const f32, B: *const f32, C: *mut f32,
+        M: c_int, N: c_int, K: c_int,
+        alpha: f32, beta: f32,
+        stream: cudaStream_t
+    );
+    
+    pub fn launch_fused_conv_bn_relu(
+        input: *const f32, weight: *const f32,
+        bn_weight: *const f32, bn_bias: *const f32,
+        bn_mean: *const f32, bn_var: *const f32,
+        output: *mut f32,
+        batch: c_int, in_channels: c_int, out_channels: c_int,
+        in_h: c_int, in_w: c_int, out_h: c_int, out_w: c_int,
+        kernel_h: c_int, kernel_w: c_int,
+        stride_h: c_int, stride_w: c_int,
+        pad_h: c_int, pad_w: c_int,
+        eps: f32,
+        stream: cudaStream_t
+    );
+    
+    pub fn launch_fused_attention(
+        Q: *const f32, K: *const f32, V: *const f32,
+        output: *mut f32,
+        batch: c_int, heads: c_int, seq_len: c_int, head_dim: c_int,
+        scale: f32,
+        stream: cudaStream_t
+    );
+}
+
 // cuBLAS API
 #[cfg(feature = "cuda")]
 #[link(name = "cublas")]

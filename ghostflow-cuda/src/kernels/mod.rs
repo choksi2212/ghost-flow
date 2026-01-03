@@ -45,13 +45,13 @@ pub type KernelFn = unsafe extern "C" fn();
 
 /// Elementwise kernel signatures
 pub mod elementwise {
-    /// Add kernel: c[i] = a[i] + b[i]
+    /// Add kernel: `c[i] = a[i] + b[i]`
     pub const ADD_KERNEL: &str = "ghostflow_add_f32";
     
-    /// Multiply kernel: c[i] = a[i] * b[i]
+    /// Multiply kernel: `c[i] = a[i] * b[i]`
     pub const MUL_KERNEL: &str = "ghostflow_mul_f32";
     
-    /// ReLU kernel: y[i] = max(0, x[i])
+    /// ReLU kernel: `y[i] = max(0, x[i])`
     pub const RELU_KERNEL: &str = "ghostflow_relu_f32";
     
     /// GELU kernel

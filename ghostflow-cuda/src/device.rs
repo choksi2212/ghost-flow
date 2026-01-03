@@ -3,6 +3,7 @@
 use crate::error::{CudaError, CudaResult};
 use crate::stream::CudaStream;
 use crate::memory::GpuMemoryPool;
+use crate::ffi;
 use std::sync::atomic::{AtomicBool, Ordering};
 use parking_lot::Mutex;
 

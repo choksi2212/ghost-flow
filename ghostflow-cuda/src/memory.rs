@@ -47,24 +47,25 @@ impl GpuMemoryPool {
         drop(free_blocks);
         
         // Allocate new block
-        #[allow(unused_unsafe)]
-        let ptr = unsafe {
-            let ptr: *mut u8 = std::ptr::null_mut();
-            
-            #[cfg(feature = "cuda")]
-            {
-                use cuda_runtime_sys::*;
-                let result = cudaMalloc(
-                    &mut ptr as *mut *mut u8 as *mut *mut std::ffi::c_void,
-                    rounded_size,
-                );
-                if result != cudaError_t::cudaSuccess {
-                    return Err(format!("CUDA malloc failed: {:?}", result));
-                }
+        let mut ptr: *mut u8 = std::ptr::null_mut();
+        
+        #[cfg(feature = "cuda")]
+        unsafe {
+            use crate::ffi;
+            let result = ffi::cudaMalloc(
+                &mut ptr as *mut *mut u8 as *mut *mut std::ffi::c_void,
+                rounded_size,
+            );
+            if result != 0 {
+                return Err(format!("CUDA malloc failed with error code: {}", result));
             }
-            
-            ptr
-        };
+        }
+        
+        #[cfg(not(feature = "cuda"))]
+        {
+            // CPU fallback - just allocate regular memory
+            ptr = vec![0u8; rounded_size].leak().as_mut_ptr();
+        }
         
         // Track allocation
         let mut allocated = self.allocated.lock().unwrap();
@@ -100,18 +101,21 @@ impl GpuMemoryPool {
     }
 
     /// Clear the memory pool (actually free memory)
-    #[cfg(feature = "cuda")]
     pub fn clear(&self) -> Result<(), String> {
         let mut free_blocks = self.free_blocks.lock().unwrap();
         
         for (_, blocks) in free_blocks.iter() {
             for &ptr in blocks {
+                #[cfg(feature = "cuda")]
                 unsafe {
-                    #[cfg(feature = "cuda")]
-                    {
-                        use cuda_runtime_sys::*;
-                        cudaFree(ptr as *mut std::ffi::c_void);
-                    }
+                    use crate::ffi;
+                    ffi::cudaFree(ptr as *mut std::ffi::c_void);
+                }
+                
+                #[cfg(not(feature = "cuda"))]
+                unsafe {
+                    // Free CPU memory
+                    let _ = Vec::from_raw_parts(ptr, 0, 0);
                 }
             }
         }
@@ -164,52 +168,58 @@ impl GpuTensor {
     }
 
     /// Copy data from CPU to GPU
-    #[cfg(feature = "cuda")]
     pub fn copy_from_cpu(&mut self, data: &[f32]) -> Result<(), String> {
         let numel: usize = self.shape.iter().product();
         if data.len() != numel {
             return Err("Data size mismatch".to_string());
         }
         
+        #[cfg(feature = "cuda")]
         unsafe {
-            #[cfg(feature = "cuda")]
-            {
-                use cuda_runtime_sys::*;
-                let result = cudaMemcpy(
-                    self.ptr as *mut std::ffi::c_void,
-                    data.as_ptr() as *const std::ffi::c_void,
-                    numel * std::mem::size_of::<f32>(),
-                    cudaMemcpyKind::cudaMemcpyHostToDevice,
-                );
-                if result != cudaError_t::cudaSuccess {
-                    return Err(format!("CUDA memcpy H2D failed: {:?}", result));
-                }
+            use crate::ffi;
+            let result = ffi::cudaMemcpy(
+                self.ptr as *mut std::ffi::c_void,
+                data.as_ptr() as *const std::ffi::c_void,
+                numel * std::mem::size_of::<f32>(),
+                ffi::cudaMemcpyKind::cudaMemcpyHostToDevice,
+            );
+            if result != 0 {
+                return Err(format!("CUDA memcpy H2D failed with error code: {}", result));
             }
+        }
+        
+        #[cfg(not(feature = "cuda"))]
+        unsafe {
+            // CPU fallback - just copy memory
+            std::ptr::copy_nonoverlapping(data.as_ptr(), self.ptr, numel);
         }
         
         Ok(())
     }
 
     /// Copy data from GPU to CPU
-    #[cfg(feature = "cuda")]
     pub fn copy_to_cpu(&self) -> Result<Vec<f32>, String> {
         let numel: usize = self.shape.iter().product();
         let mut data = vec![0.0f32; numel];
         
+        #[cfg(feature = "cuda")]
         unsafe {
-            #[cfg(feature = "cuda")]
-            {
-                use cuda_runtime_sys::*;
-                let result = cudaMemcpy(
-                    data.as_mut_ptr() as *mut std::ffi::c_void,
-                    self.ptr as *const std::ffi::c_void,
-                    numel * std::mem::size_of::<f32>(),
-                    cudaMemcpyKind::cudaMemcpyDeviceToHost,
-                );
-                if result != cudaError_t::cudaSuccess {
-                    return Err(format!("CUDA memcpy D2H failed: {:?}", result));
-                }
+            use crate::ffi;
+            let result = ffi::cudaMemcpy(
+                data.as_mut_ptr() as *mut std::ffi::c_void,
+                self.ptr as *const std::ffi::c_void,
+                numel * std::mem::size_of::<f32>(),
+                ffi::cudaMemcpyKind::cudaMemcpyDeviceToHost,
+            );
+            if result != 0 {
+                return Err(format!("CUDA memcpy D2H failed with error code: {}", result));
             }
+        }
+        
+        #[cfg(not(feature = "cuda"))]
+        unsafe {
+            // CPU fallback - just copy memory
+            std::ptr::copy_nonoverlapping(self.ptr, data.as_mut_ptr(), numel);
         }
         
         Ok(data)

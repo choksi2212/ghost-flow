@@ -15,3 +15,7 @@ cc = "1.0"
 [features]
 default = []
 cuda = []
+
+# Note: When users enable the 'cuda' feature, they need CUDA toolkit installed
+# The library will use the FFI bindings defined in src/ffi.rs
+# Documentation builds work without CUDA by using CPU fallbacks

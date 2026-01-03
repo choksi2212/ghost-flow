@@ -17,6 +17,7 @@ pub struct CompiledKernel {
 }
 
 #[cfg(feature = "cuda")]
+#[derive(Clone)]
 pub struct CudaFunction {
     // CUDA function handle
     // Would contain actual CUDA function pointer
@@ -134,7 +135,7 @@ impl JitCompiler {
     }
 
     /// Compile CUDA code with nvcc
-    fn compile_cuda(&self, _code: &str) -> Result<CompiledKernel, String> {
+    fn compile_cuda(&self, code: &str) -> Result<CompiledKernel, String> {
         #[cfg(feature = "cuda")]
         {
             // In real implementation:
@@ -192,11 +193,11 @@ impl KernelLauncher {
     pub fn launch(
         &mut self,
         graph: &ComputeGraph,
-        input: &[f32],
-        output: &mut [f32],
+        _input: &[f32],
+        _output: &mut [f32],
     ) -> Result<(), String> {
         // Compile kernel
-        let kernel = self.compiler.compile(graph)?;
+        let _kernel = self.compiler.compile(graph)?;
         
         // Launch on GPU
         // In real implementation:

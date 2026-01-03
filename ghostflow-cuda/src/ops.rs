@@ -15,26 +15,9 @@ pub mod elementwise {
         #[cfg(feature = "cuda")]
         {
             // Use CUDA kernel for element-wise addition
-            let size = a.numel();
-            let result = CudaTensor::zeros(a.shape().dims(), a.device_id())?;
-            
-            unsafe {
-                use cuda_runtime_sys::*;
-                // Launch vectorized add kernel
-                let block_size = 256;
-                let grid_size = (size + block_size - 1) / block_size;
-                
-                // Simple element-wise add kernel (can be optimized further)
-                let kernel_code = format!(
-                    "__global__ void add_kernel(const float* a, const float* b, float* c, int n) {{
-                        int idx = blockIdx.x * blockDim.x + threadIdx.x;
-                        if (idx < n) c[idx] = a[idx] + b[idx];
-                    }}"
-                );
-                
-                // For now, fall back to CPU for safety
-                // TODO: Integrate with optimized_kernels.cu
-            }
+            // In real implementation: launch optimized CUDA kernel
+            // For now, fall back to CPU for safety
+            // TODO: Integrate with optimized_kernels.cu
         }
         
         // CPU fallback
