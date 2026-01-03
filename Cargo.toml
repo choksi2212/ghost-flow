@@ -8,7 +8,6 @@ members = [
     "ghostflow-data",
     "ghostflow-cuda",
     "ghostflow-ml",
-    "ghostflow-benchmarks",
 ]
 
 [workspace.package]
