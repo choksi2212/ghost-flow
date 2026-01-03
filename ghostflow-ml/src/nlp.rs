@@ -653,7 +653,8 @@ mod tests {
             "the lazy dog sleeps".to_string(),
         ];
 
-        let mut w2v = Word2Vec::new(10).min_count(1).epochs(2);
+        let mut w2v = Word2Vec::new(10).min_count(1);
+        w2v.epochs = 2;
         w2v.fit(&texts);
 
         assert!(w2v.vocab_size() > 0);

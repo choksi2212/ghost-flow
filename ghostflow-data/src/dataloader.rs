@@ -164,7 +164,7 @@ mod tests {
         let loader = DataLoader::new(dataset, 16);
         
         let mut count = 0;
-        for (batch_data, batch_target) in loader.iter() {
+        for (batch_data, _batch_target) in loader.iter() {
             assert!(batch_data.dims()[0] <= 16);
             count += 1;
         }

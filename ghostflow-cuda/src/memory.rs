@@ -47,10 +47,9 @@ impl GpuMemoryPool {
         drop(free_blocks);
         
         // Allocate new block
-        let mut ptr: *mut u8 = std::ptr::null_mut();
-        
         #[cfg(feature = "cuda")]
-        unsafe {
+        let ptr = unsafe {
+            let mut ptr: *mut u8 = std::ptr::null_mut();
             use crate::ffi;
             let result = ffi::cudaMalloc(
                 &mut ptr as *mut *mut u8 as *mut *mut std::ffi::c_void,
@@ -59,13 +58,14 @@ impl GpuMemoryPool {
             if result != 0 {
                 return Err(format!("CUDA malloc failed with error code: {}", result));
             }
-        }
+            ptr
+        };
         
         #[cfg(not(feature = "cuda"))]
-        {
+        let ptr = {
             // CPU fallback - just allocate regular memory
-            ptr = vec![0u8; rounded_size].leak().as_mut_ptr();
-        }
+            vec![0u8; rounded_size].leak().as_mut_ptr()
+        };
         
         // Track allocation
         let mut allocated = self.allocated.lock().unwrap();

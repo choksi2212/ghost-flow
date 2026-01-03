@@ -1168,7 +1168,7 @@ mod tests {
         let mut lr = LinearRegression::new();
         lr.fit(&x, &y);
 
-        let predictions = lr.predict(&x);
+        let _predictions = lr.predict(&x);
         let score = lr.score(&x, &y);
 
         assert!(score > 0.99, "R² should be close to 1.0");

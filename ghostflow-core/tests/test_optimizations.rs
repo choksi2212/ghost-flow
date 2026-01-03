@@ -140,7 +140,7 @@ mod phase2_tests {
 
 #[cfg(test)]
 mod phase3_tests {
-    use super::*;
+    use ghostflow_core::Tensor;
 
     #[test]
     #[cfg(feature = "cuda")]
@@ -199,14 +199,13 @@ mod phase3_tests {
 
 #[cfg(test)]
 mod phase4_tests {
-    use super::*;
     use ghostflow_core::fusion::*;
     use ghostflow_core::jit::*;
     use ghostflow_core::layout::*;
 
     #[test]
     fn test_fusion_engine() {
-        let mut engine = FusionEngine::new();
+        let engine = FusionEngine::new();
         
         // Create a graph with Conv + BN + ReLU
         let graph = ComputeGraph {
@@ -266,7 +265,7 @@ mod phase4_tests {
         
         // Cache should have one entry after successful compile
         let stats_after = compiler.cache_stats();
-        assert!(stats_after.0 >= 0); // Cache exists
+        assert!(stats_after.0 == 1); // Cache has one entry
     }
 
     #[test]

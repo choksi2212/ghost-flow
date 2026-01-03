@@ -504,7 +504,7 @@ mod tests {
         let data = Tensor::from_slice(&vec![1.0f32; 100], &[10, 10]).unwrap();
         let labels = Tensor::from_slice(&vec![0.0f32; 10], &[10]).unwrap();
 
-        let (local_data, local_labels) = trainer.split_data(&data, &labels);
+        let (local_data, _local_labels) = trainer.split_data(&data, &labels);
         assert_eq!(local_data.dims()[0], 5); // Half the data
     }
 

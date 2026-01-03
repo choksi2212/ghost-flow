@@ -756,7 +756,8 @@ mod tests {
         let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
         let y = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
         
-        let mut reg = SGDRegressor::new().max_iter(100);
+        let mut reg = SGDRegressor::new();
+        reg.max_iter = 100;
         reg.fit(&x, &y);
         let pred = reg.predict(&x);
         assert_eq!(pred.dims(), &[3]);

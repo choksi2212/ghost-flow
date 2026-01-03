@@ -135,7 +135,7 @@ impl JitCompiler {
     }
 
     /// Compile CUDA code with nvcc
-    fn compile_cuda(&self, code: &str) -> Result<CompiledKernel, String> {
+    fn compile_cuda(&self, _code: &str) -> Result<CompiledKernel, String> {
         #[cfg(feature = "cuda")]
         {
             // In real implementation:
