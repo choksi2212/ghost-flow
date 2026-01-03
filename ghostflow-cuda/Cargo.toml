@@ -1,0 +1,17 @@
+[package]
+name = "ghostflow-cuda"
+version = "0.1.0"
+edition = "2021"
+description = "CUDA backend for GhostFlow ML framework"
+build = "build.rs"
+
+[dependencies]
+ghostflow-core = { path = "../ghostflow-core" }
+parking_lot = "0.12"
+
+[build-dependencies]
+cc = "1.0"
+
+[features]
+default = []
+cuda = []

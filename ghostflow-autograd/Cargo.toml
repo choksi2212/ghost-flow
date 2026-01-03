@@ -1,0 +1,8 @@
+[package]
+name = "ghostflow-autograd"
+version = "0.1.0"
+edition = "2021"
+description = "Automatic differentiation for GhostFlow ML framework"
+
+[dependencies]
+ghostflow-core = { path = "../ghostflow-core" }

@@ -1,0 +1,26 @@
+[package]
+name = "ghostflow-core"
+version = "0.1.0"
+edition = "2021"
+description = "Core tensor operations for GhostFlow ML framework - optimized for maximum performance"
+
+[features]
+default = ["rayon", "simd"]
+blas = ["dep:cblas"]
+simd = ["wide", "pulp"]
+cuda = []
+all-optimizations = ["simd", "rayon"]
+
+[dependencies]
+rand = "0.8"
+rand_distr = "0.4"
+num-traits = "0.2"
+rayon = { version = "1.8", optional = true }
+parking_lot = "0.12"
+thiserror = "1.0"
+smallvec = "1.11"
+wide = { version = "0.7", optional = true }
+pulp = { version = "0.18", optional = true }
+
+# BLAS for optimized linear algebra (optional, requires system installation)
+cblas = { version = "0.4", optional = true }

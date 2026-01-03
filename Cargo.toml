@@ -1,0 +1,58 @@
+[workspace]
+resolver = "2"
+members = [
+    "ghostflow-core",
+    "ghostflow-autograd",
+    "ghostflow-nn",
+    "ghostflow-optim",
+    "ghostflow-data",
+    "ghostflow-cuda",
+    "ghostflow-ml",
+    "ghostflow-benchmarks",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["GhostFlow Team"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ghostflow/ghostflow"
+description = "Next-generation ML framework - faster than TensorFlow and PyTorch"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
+
+[workspace.dependencies]
+# Core dependencies
+rand = "0.8"
+rand_distr = "0.4"
+num-traits = "0.2"
+rayon = "1.8"
+parking_lot = "0.12"
+thiserror = "1.0"
+smallvec = "1.11"
+
+# SIMD and performance
+wide = "0.7"
+pulp = "0.18"
+
+# BLAS for optimized linear algebra
+blas-src = { version = "0.10", features = ["openblas"] }
+cblas = "0.4"
+intel-mkl-src = "0.8"
+accelerate-src = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+bincode = "1.3"
+
+# Optional CUDA (feature-gated)
+# cuda-runtime-sys = { version = "0.3", optional = true }

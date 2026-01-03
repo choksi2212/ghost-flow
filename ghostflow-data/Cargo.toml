@@ -1,0 +1,10 @@
+[package]
+name = "ghostflow-data"
+version = "0.1.0"
+edition = "2021"
+description = "Data loading utilities for GhostFlow ML framework"
+
+[dependencies]
+ghostflow-core = { path = "../ghostflow-core" }
+rand = "0.8"
+rayon = "1.8"

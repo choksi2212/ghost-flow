@@ -1,0 +1,8 @@
+[package]
+name = "ghostflow-optim"
+version = "0.1.0"
+edition = "2021"
+description = "Optimizers for GhostFlow ML framework"
+
+[dependencies]
+ghostflow-core = { path = "../ghostflow-core" }

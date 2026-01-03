@@ -1,0 +1,60 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.a
+
+# CUDA
+*.ptx
+*.cubin
+
+# Documentation
+/target/doc/
+
+# Test artifacts
+*.profraw
+*.profdata
+
+# Temporary files
+*.tmp
+*.log
+*.txt
+cuda_warnings.txt
+ml_warnings.txt
+ml_warnings2.txt
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python (for benchmarks)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Benchmarks
+/DOCS/ghostflow-benchmarks/results/
+/DOCS/ghostflow-benchmarks/charts/

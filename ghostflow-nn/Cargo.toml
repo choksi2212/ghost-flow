@@ -1,0 +1,14 @@
+[package]
+name = "ghostflow-nn"
+version = "0.1.0"
+edition = "2021"
+description = "Neural network layers for GhostFlow ML framework"
+
+[dependencies]
+ghostflow-core = { path = "../ghostflow-core" }
+rand = "0.8"
+rand_distr = "0.4"
+
+[features]
+default = []
+optimized-conv = []
