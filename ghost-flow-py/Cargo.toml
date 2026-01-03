@@ -1,0 +1,21 @@
+[package]
+name = "ghost-flow-py"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "ghost_flow"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module", "abi3-py38"] }
+ghostflow-core = { path = "../ghostflow-core" }
+ghostflow-nn = { path = "../ghostflow-nn" }
+ghostflow-ml = { path = "../ghostflow-ml" }
+ghostflow-autograd = { path = "../ghostflow-autograd" }
+ghostflow-optim = { path = "../ghostflow-optim" }
+ghostflow-data = { path = "../ghostflow-data" }
+numpy = "0.20"
+
+[build-dependencies]
+pyo3-build-config = "0.20"
