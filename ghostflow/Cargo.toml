@@ -1,12 +1,12 @@
 [package]
-name = "ghostflow"
+name = "ghost-flow"
 version = "0.1.0"
 edition = "2021"
 description = "Complete machine learning framework in Rust - tensors, neural networks, and 50+ ML algorithms"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/choksi2212/ghost-flow"
 homepage = "https://github.com/choksi2212/ghost-flow"
-documentation = "https://docs.rs/ghostflow"
+documentation = "https://docs.rs/ghost-flow"
 keywords = ["machine-learning", "deep-learning", "neural-network", "tensor", "ml"]
 categories = ["science", "algorithms"]
 readme = "../README.md"
