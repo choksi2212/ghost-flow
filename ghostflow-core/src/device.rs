@@ -39,7 +39,7 @@ impl fmt::Display for Cpu {
 }
 
 /// CUDA device (placeholder for future implementation)
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Cuda {
     pub device_id: i32,
 }
@@ -47,12 +47,6 @@ pub struct Cuda {
 impl Cuda {
     pub fn new(device_id: i32) -> Self {
         Cuda { device_id }
-    }
-}
-
-impl Default for Cuda {
-    fn default() -> Self {
-        Cuda { device_id: 0 }
     }
 }
 

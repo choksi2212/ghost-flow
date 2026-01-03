@@ -3,7 +3,7 @@
 use std::cell::RefCell;
 
 thread_local! {
-    static GRAD_TAPE: RefCell<Option<GradTape>> = RefCell::new(None);
+    static GRAD_TAPE: RefCell<Option<GradTape>> = const { RefCell::new(None) };
 }
 
 /// Gradient tape that records operations for backward pass
@@ -13,12 +13,15 @@ pub struct GradTape {
     enabled: bool,
 }
 
+/// Type alias for backward function
+type BackwardFn = Box<dyn Fn(&[f32], &[Vec<f32>]) -> Vec<Vec<f32>> + Send + Sync>;
+
 /// A recorded operation in the tape
 pub struct RecordedOp {
     pub op_name: &'static str,
     pub input_ids: Vec<usize>,
     pub output_id: usize,
-    pub backward_fn: Box<dyn Fn(&[f32], &[Vec<f32>]) -> Vec<Vec<f32>> + Send + Sync>,
+    pub backward_fn: BackwardFn,
 }
 
 impl std::fmt::Debug for RecordedOp {
@@ -104,7 +107,7 @@ impl Drop for GradTapeContext {
 /// Check if we're currently recording
 pub fn is_recording() -> bool {
     GRAD_TAPE.with(|tape| {
-        tape.borrow().as_ref().map_or(false, |t| t.is_enabled())
+        tape.borrow().as_ref().is_some_and(|t| t.is_enabled())
     })
 }
 

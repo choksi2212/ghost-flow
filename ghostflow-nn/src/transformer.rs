@@ -286,7 +286,7 @@ impl Module for TransformerEncoder {
     }
 
     fn is_training(&self) -> bool {
-        self.layers.first().map_or(false, |l| l.is_training())
+        self.layers.first().is_some_and(|l| l.is_training())
     }
 }
 

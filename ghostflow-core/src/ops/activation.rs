@@ -11,7 +11,7 @@ impl Tensor {
             use crate::ops::simd::relu_simd;
             let data = self.data_f32();
             let result = relu_simd(&data);
-            return Tensor::from_slice(&result, self.dims()).unwrap();
+            Tensor::from_slice(&result, self.dims()).unwrap()
         }
         
         #[cfg(not(feature = "simd"))]
@@ -44,8 +44,8 @@ impl Tensor {
 
     /// SELU activation (self-normalizing)
     pub fn selu(&self) -> Tensor {
-        const ALPHA: f32 = 1.6732632423543772;
-        const SCALE: f32 = 1.0507009873554805;
+        const ALPHA: f32 = 1.673_263_2;
+        const SCALE: f32 = 1.050_701;
         
         let data: Vec<f32> = self.data_f32()
             .par_iter()
@@ -63,7 +63,7 @@ impl Tensor {
             use crate::ops::simd::sigmoid_simd;
             let data = self.data_f32();
             let result = sigmoid_simd(&data);
-            return Tensor::from_slice(&result, self.dims()).unwrap();
+            Tensor::from_slice(&result, self.dims()).unwrap()
         }
         
         #[cfg(not(feature = "simd"))]
@@ -92,7 +92,7 @@ impl Tensor {
             use crate::ops::simd::gelu_simd;
             let data = self.data_f32();
             let result = gelu_simd(&data);
-            return Tensor::from_slice(&result, self.dims()).unwrap();
+            Tensor::from_slice(&result, self.dims()).unwrap()
         }
         
         #[cfg(not(feature = "simd"))]

@@ -44,8 +44,8 @@ impl Transform for Normalize {
             for c in 0..channels {
                 let start = c * spatial_size;
                 let end = start + spatial_size;
-                for i in start..end {
-                    result[i] = (result[i] - self.mean[c]) / self.std[c];
+                for item in result.iter_mut().take(end).skip(start) {
+                    *item = (*item - self.mean[c]) / self.std[c];
                 }
             }
         } else {
@@ -57,8 +57,8 @@ impl Transform for Normalize {
                 for c in 0..channels {
                     let start = b * batch_stride + c * spatial_size;
                     let end = start + spatial_size;
-                    for i in start..end {
-                        result[i] = (result[i] - self.mean[c]) / self.std[c];
+                    for item in result.iter_mut().take(end).skip(start) {
+                        *item = (*item - self.mean[c]) / self.std[c];
                     }
                 }
             }

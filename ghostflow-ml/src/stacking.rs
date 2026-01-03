@@ -640,9 +640,7 @@ fn solve_linear(a: &[f32], b: &[f32], n: usize) -> Vec<f32> {
         }
 
         for j in 0..=n {
-            let tmp = aug[i * (n + 1) + j];
-            aug[i * (n + 1) + j] = aug[max_row * (n + 1) + j];
-            aug[max_row * (n + 1) + j] = tmp;
+            aug.swap(i * (n + 1) + j, max_row * (n + 1) + j);
         }
 
         let pivot = aug[i * (n + 1) + i];

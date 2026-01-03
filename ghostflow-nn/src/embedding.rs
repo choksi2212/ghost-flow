@@ -49,15 +49,13 @@ impl Embedding {
         let num_embeddings = dims[0];
         let embedding_dim = dims[1];
         
-        let emb = Embedding {
+        Embedding {
             weight,
             num_embeddings,
             embedding_dim,
             padding_idx: None,
             training: !freeze,
-        };
-        
-        emb
+        }
     }
 
     /// Get embedding dimension

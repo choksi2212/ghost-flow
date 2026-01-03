@@ -39,7 +39,8 @@ impl Sequential {
         }
     }
 
-    pub fn add<M: Module + 'static>(mut self, layer: M) -> Self {
+    /// Add a layer to the sequential model
+    pub fn add_layer<M: Module + 'static>(mut self, layer: M) -> Self {
         self.layers.push(Box::new(layer));
         self
     }

@@ -3,13 +3,14 @@
 use std::fmt;
 
 /// Supported data types for tensor elements
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum DType {
     /// 16-bit floating point (half precision)
     F16,
     /// Brain floating point (truncated f32)
     BF16,
     /// 32-bit floating point (single precision) - DEFAULT
+    #[default]
     F32,
     /// 64-bit floating point (double precision)
     F64,
@@ -51,12 +52,6 @@ impl DType {
     /// Check if this is a signed type
     pub fn is_signed(&self) -> bool {
         !matches!(self, DType::U8 | DType::Bool)
-    }
-}
-
-impl Default for DType {
-    fn default() -> Self {
-        DType::F32
     }
 }
 

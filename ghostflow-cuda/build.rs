@@ -3,6 +3,18 @@
 fn main() {
     println!("cargo:rerun-if-changed=src/optimized_kernels.cu");
     
+    // Try to detect if nvcc is available
+    let nvcc_available = std::process::Command::new("nvcc")
+        .arg("--version")
+        .output()
+        .is_ok();
+    
+    if !nvcc_available {
+        println!("cargo:warning=NVCC not found - building without CUDA support. GPU operations will use CPU fallback.");
+        println!("cargo:warning=To enable CUDA: Install CUDA Toolkit from https://developer.nvidia.com/cuda-downloads");
+        return;
+    }
+    
     // Check if CUDA is available
     #[cfg(feature = "cuda")]
     {
@@ -16,7 +28,7 @@ fn main() {
         println!("cargo:rustc-link-lib=cublas");
         
         // Compile CUDA kernels using nvcc
-        cc::Build::new()
+        match cc::Build::new()
             .cuda(true)
             .flag("-arch=sm_70") // Volta and newer
             .flag("-gencode=arch=compute_70,code=sm_70")
@@ -26,9 +38,13 @@ fn main() {
             .flag("--use_fast_math")
             .flag("-O3")
             .file("src/optimized_kernels.cu")
-            .compile("ghostflow_cuda_kernels");
-        
-        println!("cargo:warning=Compiled CUDA kernels successfully");
+            .try_compile("ghostflow_cuda_kernels")
+        {
+            Ok(_) => println!("cargo:warning=Compiled CUDA kernels successfully"),
+            Err(e) => {
+                println!("cargo:warning=Failed to compile CUDA kernels: {}. Using CPU fallback.", e);
+            }
+        }
     }
     
     #[cfg(not(feature = "cuda"))]

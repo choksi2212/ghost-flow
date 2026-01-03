@@ -5,9 +5,11 @@
 //! a Pythonic API similar to PyTorch and TensorFlow.
 
 use pyo3::prelude::*;
-use pyo3::types::{PyList, PyTuple};
+use pyo3::types::PyList;
 use pyo3::exceptions::PyValueError;
-use ghostflow_core::{Tensor as RustTensor, DType};
+use pyo3::wrap_pymodule;
+use ghostflow_core::Tensor as RustTensor;
+use ghostflow_nn::Module;
 
 /// Python wrapper for GhostFlow Tensor
 #[pyclass(name = "Tensor")]
@@ -208,8 +210,7 @@ impl PyLinear {
     }
     
     fn forward(&mut self, input: &PyTensor) -> PyResult<PyTensor> {
-        let output = self.inner.forward(&input.inner)
-            .map_err(|e| PyValueError::new_err(format!("Forward failed: {}", e)))?;
+        let output = self.inner.forward(&input.inner);
         Ok(PyTensor { inner: output })
     }
     

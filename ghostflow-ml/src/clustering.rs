@@ -286,6 +286,15 @@ pub enum DistanceMetric {
     Cosine,
 }
 
+/// Helper struct to group clustering parameters
+struct ClusterParams<'a> {
+    x: &'a [f32],
+    labels: &'a mut [i32],
+    visited: &'a mut [bool],
+    n_samples: usize,
+    n_features: usize,
+}
+
 impl DBSCAN {
     pub fn new(eps: f32, min_samples: usize) -> Self {
         DBSCAN {
@@ -332,16 +341,12 @@ impl DBSCAN {
 
     fn expand_cluster(
         &self,
-        x: &[f32],
-        labels: &mut [i32],
+        cluster_params: &mut ClusterParams,
         point_idx: usize,
         neighbors: Vec<usize>,
         cluster_id: i32,
-        n_samples: usize,
-        n_features: usize,
-        visited: &mut [bool],
     ) {
-        labels[point_idx] = cluster_id;
+        cluster_params.labels[point_idx] = cluster_id;
 
         let mut seeds = neighbors;
         let mut i = 0;
@@ -349,9 +354,14 @@ impl DBSCAN {
         while i < seeds.len() {
             let q = seeds[i];
 
-            if !visited[q] {
-                visited[q] = true;
-                let q_neighbors = self.region_query(x, q, n_samples, n_features);
+            if !cluster_params.visited[q] {
+                cluster_params.visited[q] = true;
+                let q_neighbors = self.region_query(
+                    cluster_params.x,
+                    q,
+                    cluster_params.n_samples,
+                    cluster_params.n_features
+                );
 
                 if q_neighbors.len() >= self.min_samples {
                     for &neighbor in &q_neighbors {
@@ -362,8 +372,8 @@ impl DBSCAN {
                 }
             }
 
-            if labels[q] == -1 {
-                labels[q] = cluster_id;
+            if cluster_params.labels[q] == -1 {
+                cluster_params.labels[q] = cluster_id;
             }
 
             i += 1;
@@ -390,15 +400,18 @@ impl DBSCAN {
 
             if neighbors.len() >= self.min_samples {
                 core_samples.push(i);
+                let mut params = ClusterParams {
+                    x: &x_data,
+                    labels: &mut labels,
+                    visited: &mut visited,
+                    n_samples,
+                    n_features,
+                };
                 self.expand_cluster(
-                    &x_data,
-                    &mut labels,
+                    &mut params,
                     i,
                     neighbors,
                     cluster_id,
-                    n_samples,
-                    n_features,
-                    &mut visited,
                 );
                 cluster_id += 1;
             }

@@ -80,7 +80,7 @@ pub struct MultiHeadAttention {
 
 impl MultiHeadAttention {
     pub fn new(embed_dim: usize, num_heads: usize, dropout: f32) -> Self {
-        assert!(embed_dim % num_heads == 0, "embed_dim must be divisible by num_heads");
+        assert!(embed_dim.is_multiple_of(num_heads), "embed_dim must be divisible by num_heads");
         let head_dim = embed_dim / num_heads;
         
         MultiHeadAttention {

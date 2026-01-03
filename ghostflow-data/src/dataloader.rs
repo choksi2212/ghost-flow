@@ -46,7 +46,7 @@ impl<D: Dataset> DataLoader<D> {
         if self.drop_last {
             n / self.batch_size
         } else {
-            (n + self.batch_size - 1) / self.batch_size
+            n.div_ceil(self.batch_size)
         }
     }
 

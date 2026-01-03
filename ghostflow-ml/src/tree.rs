@@ -169,7 +169,7 @@ impl DecisionTreeClassifier {
         // Check stopping conditions
         let should_stop = 
             n_samples < self.min_samples_split ||
-            self.max_depth.map_or(false, |d| depth >= d) ||
+            self.max_depth.is_some_and(|d| depth >= d) ||
             impurity < 1e-7 ||
             class_counts.iter().filter(|&&c| c > 0).count() <= 1;
         
@@ -429,7 +429,7 @@ impl DecisionTreeRegressor {
         // Check stopping conditions
         let should_stop = 
             n_samples < self.min_samples_split ||
-            self.max_depth.map_or(false, |d| depth >= d) ||
+            self.max_depth.is_some_and(|d| depth >= d) ||
             variance < 1e-7;
         
         if should_stop {

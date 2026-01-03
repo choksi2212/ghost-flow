@@ -85,6 +85,7 @@ pub fn cross_entropy(input: &Tensor, target: &Tensor) -> Tensor {
     
     let mut total_loss = 0.0f32;
     
+    #[allow(clippy::needless_range_loop)]
     for b in 0..batch_size {
         let start = b * num_classes;
         let logits = &input_data[start..start + num_classes];
@@ -133,6 +134,7 @@ pub fn cosine_embedding_loss(x1: &Tensor, x2: &Tensor, target: &Tensor, margin: 
     
     let mut total_loss = 0.0f32;
     
+    #[allow(clippy::needless_range_loop)]
     for b in 0..batch_size {
         let start = b * dim;
         let end = start + dim;

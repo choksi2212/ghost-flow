@@ -6,6 +6,9 @@ use rand::thread_rng;
 /// Trait for sampling indices
 pub trait Sampler: Iterator<Item = usize> {
     fn len(&self) -> usize;
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 /// Sequential sampler - returns indices in order
@@ -162,9 +165,7 @@ impl<S: Sampler> Iterator for BatchSampler<S> {
             }
         }
         
-        if batch.is_empty() {
-            None
-        } else if self.drop_last && batch.len() < self.batch_size {
+        if batch.is_empty() || (self.drop_last && batch.len() < self.batch_size) {
             None
         } else {
             Some(batch)

@@ -97,6 +97,7 @@ impl Module for Conv1d {
             let bias_data = bias.data_f32();
             let mut result_data = result.data_f32();
             
+            #[allow(clippy::needless_range_loop)]
             for b in 0..batch {
                 for oc in 0..self.out_channels {
                     for ol in 0..out_len {
@@ -278,6 +279,7 @@ impl Conv2d {
             let bias_data = bias.data_f32();
             let mut result_data = result.data_f32();
             
+            #[allow(clippy::needless_range_loop)]
             for b in 0..batch {
                 for oc in 0..self.out_channels {
                     for oh in 0..out_h {

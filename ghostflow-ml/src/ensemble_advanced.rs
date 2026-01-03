@@ -641,10 +641,8 @@ impl IsolationForest {
             if let Some(ref left) = node.left {
                 return self.path_length(left, sample, depth + 1);
             }
-        } else {
-            if let Some(ref right) = node.right {
-                return self.path_length(right, sample, depth + 1);
-            }
+        } else if let Some(ref right) = node.right {
+            return self.path_length(right, sample, depth + 1);
         }
 
         depth as f32
@@ -655,7 +653,7 @@ impl IsolationForest {
             return 0.0;
         }
         let n = n as f32;
-        2.0 * ((n - 1.0).ln() + 0.5772156649) - 2.0 * (n - 1.0) / n
+        2.0 * ((n - 1.0).ln() + 0.577_215_7) - 2.0 * (n - 1.0) / n
     }
 
     pub fn fit(&mut self, x: &Tensor) {

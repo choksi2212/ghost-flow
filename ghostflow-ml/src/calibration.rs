@@ -277,6 +277,13 @@ impl PlattScaling {
                 .map(|&s| Self::sigmoid(a * s + b))
                 .collect();
 
+            // Compute current loss
+            let mut loss = 0.0f32;
+            for i in 0..n_samples {
+                let p = probs[i];
+                loss -= targets[i] * p.max(1e-10).ln() + (1.0 - targets[i]) * (1.0 - p).max(1e-10).ln();
+            }
+
             // Compute gradient and Hessian
             let mut d1a = 0.0f32;
             let mut d1b = 0.0f32;
@@ -310,23 +317,36 @@ impl PlattScaling {
             let da = -(d2b * d1a - d2ab * d1b) / det;
             let db = -(-d2ab * d1a + d2a * d1b) / det;
 
-            // Line search
-            let step = 1.0f32;
+            // Line search with backtracking
+            let mut step = 1.0f32;
+            let mut accepted = false;
             while step > min_step {
                 let new_a = a + step * da;
                 let new_b = b + step * db;
 
                 // Compute new loss
-                let mut _loss = 0.0f32;
+                let mut new_loss = 0.0f32;
                 for i in 0..n_samples {
                     let p = Self::sigmoid(new_a * scores_data[i] + new_b);
-                    _loss -= targets[i] * p.max(1e-10).ln() + (1.0 - targets[i]) * (1.0 - p).max(1e-10).ln();
+                    new_loss -= targets[i] * p.max(1e-10).ln() + (1.0 - targets[i]) * (1.0 - p).max(1e-10).ln();
                 }
 
-                // Accept if loss decreased (simplified)
-                a = new_a;
-                b = new_b;
-                break;
+                // Accept if loss decreased
+                if new_loss < loss {
+                    a = new_a;
+                    b = new_b;
+                    accepted = true;
+                    break;
+                }
+                
+                // Reduce step size
+                step *= 0.5;
+            }
+            
+            // If no step accepted, use the update anyway (gradient descent step)
+            if !accepted {
+                a += 0.01 * da;
+                b += 0.01 * db;
             }
 
             // Check convergence

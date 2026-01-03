@@ -157,7 +157,7 @@ impl FusionEngine {
             
             // Update edges - remove internal edges
             graph.edges.retain(|(from, to)| {
-                !(*from == idx && *to == idx+1) && !(*from == idx+1 && *to == idx+2)
+                !(*from == idx && *to == idx+1 || *from == idx+1 && *to == idx+2)
             });
         }
     }

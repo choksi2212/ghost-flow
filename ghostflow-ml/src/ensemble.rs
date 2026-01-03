@@ -199,7 +199,7 @@ impl RandomForestRegressor {
         let n_features = x.dims()[1];
         
         let max_features = self.max_features
-            .unwrap_or_else(|| n_features / 3);
+            .unwrap_or(n_features / 3);
         
         self.trees = (0..self.n_estimators)
             .into_par_iter()
@@ -317,6 +317,7 @@ impl GradientBoostingClassifier {
         
         // Initialize predictions
         let mut f = vec![vec![0.0f32; n_samples]; self.n_classes];
+        #[allow(clippy::needless_range_loop)]
         for c in 0..self.n_classes {
             for i in 0..n_samples {
                 f[c][i] = self.initial_predictions[c];
@@ -371,6 +372,7 @@ impl GradientBoostingClassifier {
                 let tree_preds = tree.predict(x);
                 let tree_pred_data = tree_preds.data_f32();
                 
+                #[allow(clippy::needless_range_loop)]
                 for i in 0..n_samples {
                     f[c][i] += self.learning_rate * tree_pred_data[i];
                 }
@@ -421,6 +423,7 @@ impl GradientBoostingClassifier {
         
         // Initialize with initial predictions
         let mut f = vec![vec![0.0f32; n_samples]; self.n_classes];
+        #[allow(clippy::needless_range_loop)]
         for c in 0..self.n_classes {
             for i in 0..n_samples {
                 f[c][i] = self.initial_predictions[c];

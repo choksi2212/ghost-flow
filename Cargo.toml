@@ -9,6 +9,7 @@ members = [
     "ghostflow-data",
     "ghostflow-cuda",
     "ghostflow-ml",
+    "ghost-flow-py",
 ]
 
 [workspace.package]

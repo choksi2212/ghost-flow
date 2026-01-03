@@ -1,7 +1,6 @@
-///! SIMD-optimized operations for maximum performance
-///!
-///! Uses portable SIMD when available, falls back to scalar operations
-
+//! SIMD-optimized operations for maximum performance
+//!
+//! Uses portable SIMD when available, falls back to scalar operations
 use rayon::prelude::*;
 
 /// SIMD-optimized ReLU (2-4x faster than scalar)
@@ -120,7 +119,7 @@ fn fast_exp(x: f32) -> f32 {
 /// SIMD-optimized GELU
 #[inline]
 pub fn gelu_simd(data: &[f32]) -> Vec<f32> {
-    const SQRT_2_OVER_PI: f32 = 0.7978845608028654;
+    const SQRT_2_OVER_PI: f32 = 0.797_884_6;
     const COEFF: f32 = 0.044715;
     
     data.par_iter()

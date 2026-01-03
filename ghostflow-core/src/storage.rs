@@ -30,7 +30,7 @@ impl Storage {
 
     /// Create storage from typed data
     pub fn from_slice<T: TensorElement>(data: &[T]) -> Self {
-        let byte_len = data.len() * std::mem::size_of::<T>();
+        let byte_len = std::mem::size_of_val(data);
         let mut bytes = vec![0u8; byte_len];
         
         // Safe copy from typed slice to bytes
