@@ -1,0 +1,38 @@
+[package]
+name = "ghostflow"
+version = "0.1.0"
+edition = "2021"
+description = "Complete machine learning framework in Rust - tensors, neural networks, and 50+ ML algorithms"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/choksi2212/ghost-flow"
+homepage = "https://github.com/choksi2212/ghost-flow"
+documentation = "https://docs.rs/ghostflow"
+keywords = ["machine-learning", "deep-learning", "neural-network", "tensor", "ml"]
+categories = ["science", "algorithms"]
+readme = "../README.md"
+
+[features]
+default = ["nn", "ml", "autograd", "optim", "data"]
+# Core features
+simd = ["ghostflow-core/simd"]
+cuda = ["ghostflow-cuda/cuda"]
+# Module features
+nn = ["dep:ghostflow-nn"]
+ml = ["dep:ghostflow-ml"]
+autograd = ["dep:ghostflow-autograd"]
+optim = ["dep:ghostflow-optim"]
+data = ["dep:ghostflow-data"]
+# All features
+full = ["nn", "ml", "autograd", "optim", "data", "simd"]
+
+[dependencies]
+# Core is always included
+ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
+
+# Optional modules (included by default)
+ghostflow-nn = { version = "0.1.0", path = "../ghostflow-nn", optional = true }
+ghostflow-ml = { version = "0.1.0", path = "../ghostflow-ml", optional = true }
+ghostflow-autograd = { version = "0.1.0", path = "../ghostflow-autograd", optional = true }
+ghostflow-optim = { version = "0.1.0", path = "../ghostflow-optim", optional = true }
+ghostflow-data = { version = "0.1.0", path = "../ghostflow-data", optional = true }
+ghostflow-cuda = { version = "0.1.0", path = "../ghostflow-cuda", optional = true }

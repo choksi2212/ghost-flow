@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "ghostflow",
     "ghostflow-core",
     "ghostflow-autograd",
     "ghostflow-nn",
