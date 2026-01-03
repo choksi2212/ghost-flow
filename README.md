@@ -2,7 +2,7 @@
 
 # 🌊 GhostFlow
 
-### *A Blazingly Fast Machine Learning Framework - 2-3x Faster Than PyTorch*
+### *A High-Performance Machine Learning Framework Built in Rust*
 
 [![PyPI](https://img.shields.io/pypi/v/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
 [![Crates.io](https://img.shields.io/crates/v/ghost-flow.svg)](https://crates.io/crates/ghost-flow)
@@ -12,13 +12,13 @@
 [![Tests](https://img.shields.io/badge/tests-66%2F66%20passing-success.svg)]()
 [![Downloads](https://img.shields.io/pypi/dm/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
 
-**Available in Python and Rust • Hand-Optimized CUDA Kernels • 50+ ML Algorithms**
+**Available in Python and Rust • Hand-Optimized Kernels • 50+ ML Algorithms**
 
 ```bash
 pip install ghost-flow
 ```
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples) • [Benchmarks](#-benchmarks) • [Documentation](#-documentation)
+[Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples) • [Documentation](#-documentation)
 
 </div>
 
@@ -26,18 +26,18 @@ pip install ghost-flow
 
 ## 🎯 Why GhostFlow?
 
-GhostFlow is a **complete machine learning framework** that rivals PyTorch and TensorFlow in both **performance** and **ease of use**. Built in Rust with Python bindings, it delivers **2-3x faster performance** while maintaining a simple, intuitive API.
+GhostFlow is a **complete machine learning framework** built in Rust with Python bindings. It combines the **performance of Rust** with the **convenience of Python**, offering competitive performance and a rich set of ML algorithms.
 
 ### ✨ Key Highlights
 
-- 🚀 **2-3x Faster Than PyTorch** - Hand-optimized operations beat industry standards
-- 🐍 **Python & Rust** - Use from Python with `pip install ghost-flow` or Rust with `cargo add ghost-flow`
-- 🎮 **Hand-Optimized CUDA** - Custom kernels (Fused Conv+BN+ReLU, Flash Attention, Tensor Cores)
-- 🧠 **50+ ML Algorithms** - Decision trees, neural networks, clustering, and more
-- 🛡️ **Memory Safe** - Rust's guarantees mean no segfaults, no data races
-- ⚡ **99%+ Native Performance** - Python bindings maintain full Rust speed
-- 📦 **Production Ready** - Zero warnings, 66/66 tests passing, battle-tested
-- 🌐 **Works Everywhere** - CPU fallback when GPU unavailable
+- 🦀 **Built in Rust** - Memory safety, zero-cost abstractions, and native performance
+- 🐍 **Python & Rust APIs** - Use from Python (`pip install ghost-flow`) or Rust (`cargo add ghost-flow`)
+- 🎮 **GPU Acceleration** - CUDA support with optimized kernels for NVIDIA GPUs
+- 🧠 **50+ ML Algorithms** - Decision trees, neural networks, clustering, dimensionality reduction, and more
+- 🛡️ **Memory Safe** - Rust's guarantees eliminate entire classes of bugs
+- ⚡ **Optimized Operations** - SIMD vectorization and hand-tuned kernels
+- 📦 **Production Ready** - Zero warnings, 66/66 tests passing, comprehensive documentation
+- 🌐 **Cross-Platform** - Works on Windows, Linux, and macOS with CPU or GPU
 
 ---
 
@@ -287,75 +287,54 @@ fn main() {
 
 ---
 
-## 🔥 Why Choose GhostFlow?
+## 🔥 Performance
 
-### Performance Comparison
+GhostFlow is designed for performance with hand-optimized operations and efficient memory management.
 
-| Operation | GhostFlow | PyTorch | Speedup |
-|-----------|-----------|---------|---------|
-| Matrix Multiply (1024×1024) | 12.3ms | 14.2ms | **1.15x** |
-| Conv2D (ResNet-50 layer) | 8.4ms | 9.1ms | **1.08x** |
-| Fused Conv+BN+ReLU | 6.2ms | 18.7ms | **3.0x** |
-| Training (MNIST, 10 epochs) | 23.1s | 28.4s | **1.23x** |
+### Design Optimizations
 
-### Memory Efficiency
+- **SIMD Vectorization** - Leverages modern CPU instructions (AVX2, AVX-512)
+- **Memory Pooling** - Reduces allocations and improves cache locality
+- **Zero-Copy Operations** - Minimizes data movement where possible
+- **Fused Kernels** - Combines operations to reduce memory bandwidth
+- **GPU Acceleration** - CUDA support for NVIDIA GPUs
 
-| Framework | Memory Usage | Peak Memory |
-|-----------|--------------|-------------|
-| **GhostFlow** | **1.2 GB** | **1.8 GB** |
-| PyTorch | 1.8 GB | 2.4 GB |
-| TensorFlow | 2.1 GB | 2.9 GB |
+### Competitive Performance
 
-### Code Simplicity
+GhostFlow aims to provide competitive performance with established frameworks:
 
-**GhostFlow (Python):**
-```python
-import ghost_flow as gf
-model = gf.nn.Linear(784, 10)
-loss = model(x).mse_loss(y)
-loss.backward()
-```
+- **Rust Native Speed** - No Python overhead for core operations
+- **Efficient Memory Usage** - Rust's ownership system prevents memory leaks
+- **Optimized Algorithms** - Hand-tuned implementations of common operations
+- **GPU Support** - CUDA kernels for accelerated computation
 
-**PyTorch:**
-```python
-import torch
-import torch.nn as nn
-model = nn.Linear(784, 10)
-loss = nn.MSELoss()(model(x), y)
-loss.backward()
-```
-
-**Same simplicity, better performance!**
+**Note**: Performance varies by workload. For production use, always benchmark with your specific use case.
 
 ---
 
 ## 📊 Benchmarks
 
-GhostFlow is designed for **production performance**. Here's how we compare:
+GhostFlow provides competitive performance for ML workloads. Performance varies by operation and hardware.
 
-### Matrix Multiplication (1024x1024)
+### Example Benchmarks
 
-| Framework | Time (ms) | Speedup |
-|-----------|-----------|---------|
-| **GhostFlow (SIMD)** | **12.3** | **1.0x** |
-| NumPy (OpenBLAS) | 15.7 | 0.78x |
-| PyTorch (CPU) | 14.2 | 0.87x |
+These are illustrative examples. Actual performance depends on your hardware, data size, and specific use case.
 
-### Convolution (ResNet-50 layer)
+| Operation | Notes |
+|-----------|-------|
+| Matrix Multiplication | SIMD-optimized for CPU, CUDA for GPU |
+| Convolution | Supports im2col and direct convolution |
+| Neural Network Training | Efficient autograd and memory management |
+| Classical ML | Optimized decision trees, clustering, etc. |
 
-| Framework | Time (ms) | Speedup |
-|-----------|-----------|---------|
-| **GhostFlow (CUDA)** | **8.4** | **1.0x** |
-| PyTorch (CUDA) | 9.1 | 0.92x |
-| TensorFlow (CUDA) | 10.2 | 0.82x |
+**Important**: Always benchmark with your specific workload. Performance claims should be verified for your use case.
 
-### Training (MNIST, 10 epochs)
+### Why Rust for ML?
 
-| Framework | Time (s) | Memory (MB) |
-|-----------|----------|-------------|
-| **GhostFlow** | **23.1** | **145** |
-| PyTorch | 28.4 | 312 |
-| TensorFlow | 31.2 | 428 |
+- **Memory Safety**: No segfaults or data races
+- **Zero-Cost Abstractions**: High-level code compiles to efficient machine code
+- **Predictable Performance**: No garbage collector pauses
+- **Excellent Tooling**: Cargo, rustfmt, clippy, and more
 
 *Benchmarks run on: Intel i9-12900K, NVIDIA RTX 4090, 32GB RAM*
 
