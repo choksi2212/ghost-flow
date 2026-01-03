@@ -417,8 +417,8 @@ Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ghostflow.git
-cd ghostflow
+git clone https://github.com/choksi2212/ghost-flow.git
+cd ghost-flow
 
 # Build all crates
 cargo build --workspace
@@ -458,8 +458,8 @@ Special thanks to the Rust community for building an amazing ecosystem!
 
 ## 📞 Contact & Community
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/yourusername/ghostflow/issues)
-- **Discussions**: [Join the conversation](https://github.com/yourusername/ghostflow/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/choksi2212/ghost-flow/issues)
+- **Discussions**: [Join the conversation](https://github.com/choksi2212/ghost-flow/discussions)
 - **Discord**: [Join our community](https://discord.gg/ghostflow)
 - **Twitter**: [@GhostFlowML](https://twitter.com/ghostflowml)
 

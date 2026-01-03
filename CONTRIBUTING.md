@@ -16,8 +16,8 @@ Thank you for your interest in contributing to GhostFlow! We welcome contributio
 ### 1. Fork and Clone
 
 ```bash
-git clone https://github.com/yourusername/ghostflow.git
-cd ghostflow
+git clone https://github.com/choksi2212/ghost-flow.git
+cd ghost-flow
 ```
 
 ### 2. Build the Project

@@ -15,7 +15,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["GhostFlow Team"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ghostflow/ghostflow"
+repository = "https://github.com/choksi2212/ghost-flow"
 description = "Next-generation ML framework - faster than TensorFlow and PyTorch"
 
 [profile.release]
