@@ -62,42 +62,44 @@ This document outlines what's currently implemented and what's planned for futur
 - [x] Positional encoding ✅ **COMPLETED**
 
 #### New Layers
-- [ ] Conv1d, Conv3d
-- [ ] TransposeConv2d (deconvolution)
-- [ ] GroupNorm
-- [ ] InstanceNorm
-- [ ] Embedding layers
+- [x] Conv1d, Conv3d ✅ **COMPLETED**
+- [x] TransposeConv2d (deconvolution) ✅ **COMPLETED**
+- [x] GroupNorm ✅ **COMPLETED**
+- [x] InstanceNorm ✅ **COMPLETED**
+- [x] Embedding layers ✅ **COMPLETED**
 
 #### New Activations
-- [ ] Swish/SiLU
-- [ ] Mish
-- [ ] ELU, SELU
-- [ ] Softplus
+- [x] Swish/SiLU ✅ **COMPLETED**
+- [x] Mish ✅ **COMPLETED**
+- [x] ELU, SELU ✅ **COMPLETED**
+- [x] Softplus ✅ **COMPLETED**
 
 #### New Losses
-- [ ] Focal Loss
-- [ ] Contrastive Loss
-- [ ] Triplet Loss
-- [ ] Huber Loss
+- [x] Focal Loss ✅ **COMPLETED**
+- [x] Contrastive Loss ✅ **COMPLETED**
+- [x] Triplet Loss ✅ **COMPLETED**
+- [x] Huber Loss ✅ **COMPLETED**
 
 ### v0.3.0 - Advanced ML (Q3 2026)
 
 #### New Algorithms
-- [ ] XGBoost-style gradient boosting
-- [ ] LightGBM-style gradient boosting
-- [ ] CatBoost-style gradient boosting
-- [ ] Gaussian Mixture Models
-- [ ] Hidden Markov Models
-- [ ] Conditional Random Fields
+- [x] XGBoost-style gradient boosting ✅ **COMPLETED**
+- [x] LightGBM-style gradient boosting ✅ **COMPLETED**
+- [ ] CatBoost-style gradient boosting (Future)
+- [x] Gaussian Mixture Models ✅ **COMPLETED**
+- [x] Hidden Markov Models ✅ **COMPLETED**
+- [x] Conditional Random Fields ✅ **COMPLETED**
 
 #### Feature Engineering
-- [ ] Polynomial features
-- [ ] Feature hashing
-- [ ] Target encoding
-- [ ] One-hot encoding utilities
+- [x] Polynomial features ✅ **COMPLETED**
+- [x] Feature hashing ✅ **COMPLETED**
+- [x] Target encoding ✅ **COMPLETED**
+- [x] One-hot encoding utilities ✅ **COMPLETED**
 
 #### Model Selection
-- [ ] Bayesian optimization
+- [x] Bayesian optimization ✅ **COMPLETED**
+- [x] Random search ✅ **COMPLETED**
+- [x] Grid search ✅ **COMPLETED**
 - [ ] Hyperband
 - [ ] BOHB (Bayesian Optimization HyperBand)
 

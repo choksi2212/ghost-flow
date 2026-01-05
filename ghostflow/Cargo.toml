@@ -36,3 +36,19 @@ ghostflow-autograd = { version = "0.1.0", path = "../ghostflow-autograd", option
 ghostflow-optim = { version = "0.1.0", path = "../ghostflow-optim", optional = true }
 ghostflow-data = { version = "0.1.0", path = "../ghostflow-data", optional = true }
 ghostflow-cuda = { version = "0.1.0", path = "../ghostflow-cuda", optional = true }
+
+[[example]]
+name = "new_layers_demo"
+path = "../examples/new_layers_demo.rs"
+
+[[example]]
+name = "sequence_models"
+path = "../examples/sequence_models.rs"
+
+[[example]]
+name = "advanced_ml_demo"
+path = "../examples/advanced_ml_demo.rs"
+
+[[example]]
+name = "v0_3_0_complete_demo"
+path = "../examples/v0_3_0_complete_demo.rs"

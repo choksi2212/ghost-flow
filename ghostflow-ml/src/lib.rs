@@ -71,6 +71,15 @@ pub mod bayesian;
 pub mod discriminant_analysis;
 pub mod gaussian_process;
 pub mod mixture;
+pub mod gmm;  // Gaussian Mixture Models (v0.3.0)
+pub mod hmm;  // Hidden Markov Models (v0.3.0)
+
+// Advanced Gradient Boosting (v0.3.0)
+pub mod gradient_boosting;  // XGBoost-style
+pub mod lightgbm;           // LightGBM-style
+pub mod crf;                // Conditional Random Fields
+pub mod feature_engineering;  // Feature engineering utilities
+pub mod hyperparameter_optimization;  // Bayesian optimization, etc.
 
 // Neural Networks
 pub mod neural_network;

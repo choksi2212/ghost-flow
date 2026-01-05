@@ -18,8 +18,8 @@ pub mod rnn;
 
 pub use module::Module;
 pub use linear::Linear;
-pub use conv::{Conv1d, Conv2d};
-pub use norm::{BatchNorm1d, BatchNorm2d, LayerNorm};
+pub use conv::{Conv1d, Conv2d, Conv3d, TransposeConv2d};
+pub use norm::{BatchNorm1d, BatchNorm2d, LayerNorm, GroupNorm, InstanceNorm};
 pub use activation::*;
 pub use dropout::Dropout;
 pub use loss::*;
@@ -35,7 +35,8 @@ pub use rnn::{LSTM, LSTMCell, GRU, GRUCell};
 
 /// Prelude for convenient imports
 pub mod prelude {
-    pub use crate::{Module, Linear, Conv2d, BatchNorm2d, LayerNorm, Dropout};
+    pub use crate::{Module, Linear, Conv1d, Conv2d, Conv3d, TransposeConv2d};
+    pub use crate::{BatchNorm1d, BatchNorm2d, LayerNorm, GroupNorm, InstanceNorm, Dropout};
     pub use crate::activation::*;
     pub use crate::loss::*;
     pub use crate::attention::MultiHeadAttention;

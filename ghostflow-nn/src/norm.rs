@@ -278,6 +278,177 @@ impl Module for LayerNorm {
     fn is_training(&self) -> bool { self.training }
 }
 
+/// Group Normalization
+/// Divides channels into groups and normalizes within each group
+pub struct GroupNorm {
+    num_groups: usize,
+    num_channels: usize,
+    gamma: Tensor,
+    beta: Tensor,
+    eps: f32,
+    training: bool,
+}
+
+impl GroupNorm {
+    pub fn new(num_groups: usize, num_channels: usize) -> Self {
+        Self::with_eps(num_groups, num_channels, 1e-5)
+    }
+
+    pub fn with_eps(num_groups: usize, num_channels: usize, eps: f32) -> Self {
+        assert!(num_channels % num_groups == 0, "num_channels must be divisible by num_groups");
+        
+        GroupNorm {
+            num_groups,
+            num_channels,
+            gamma: Tensor::ones(&[num_channels]),
+            beta: Tensor::zeros(&[num_channels]),
+            eps,
+            training: true,
+        }
+    }
+}
+
+impl Module for GroupNorm {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let dims = input.dims();
+        let data = input.data_f32();
+        let gamma = self.gamma.data_f32();
+        let beta = self.beta.data_f32();
+        
+        let batch_size = dims[0];
+        let channels = dims[1];
+        let spatial_size: usize = dims[2..].iter().product();
+        
+        assert_eq!(channels, self.num_channels, "Input channels must match num_channels");
+        
+        let channels_per_group = channels / self.num_groups;
+        let mut output = vec![0.0f32; data.len()];
+        
+        for b in 0..batch_size {
+            for g in 0..self.num_groups {
+                // Calculate mean and variance for this group
+                let mut sum = 0.0f32;
+                let mut sum_sq = 0.0f32;
+                let group_size = (channels_per_group * spatial_size) as f32;
+                
+                for c in 0..channels_per_group {
+                    let channel_idx = g * channels_per_group + c;
+                    for s in 0..spatial_size {
+                        let idx = b * channels * spatial_size + channel_idx * spatial_size + s;
+                        let val = data[idx];
+                        sum += val;
+                        sum_sq += val * val;
+                    }
+                }
+                
+                let mean = sum / group_size;
+                let variance = (sum_sq / group_size) - (mean * mean);
+                let std = (variance + self.eps).sqrt();
+                
+                // Normalize and apply affine transformation
+                for c in 0..channels_per_group {
+                    let channel_idx = g * channels_per_group + c;
+                    for s in 0..spatial_size {
+                        let idx = b * channels * spatial_size + channel_idx * spatial_size + s;
+                        let val = data[idx];
+                        let normalized = (val - mean) / std;
+                        output[idx] = gamma[channel_idx] * normalized + beta[channel_idx];
+                    }
+                }
+            }
+        }
+        
+        Tensor::from_slice(&output, dims).unwrap()
+    }
+
+    fn parameters(&self) -> Vec<Tensor> {
+        vec![self.gamma.clone(), self.beta.clone()]
+    }
+
+    fn train(&mut self) { self.training = true; }
+    fn eval(&mut self) { self.training = false; }
+    fn is_training(&self) -> bool { self.training }
+}
+
+/// Instance Normalization
+/// Normalizes each channel independently for each sample
+pub struct InstanceNorm {
+    num_channels: usize,
+    gamma: Tensor,
+    beta: Tensor,
+    eps: f32,
+    training: bool,
+}
+
+impl InstanceNorm {
+    pub fn new(num_channels: usize) -> Self {
+        Self::with_eps(num_channels, 1e-5)
+    }
+
+    pub fn with_eps(num_channels: usize, eps: f32) -> Self {
+        InstanceNorm {
+            num_channels,
+            gamma: Tensor::ones(&[num_channels]),
+            beta: Tensor::zeros(&[num_channels]),
+            eps,
+            training: true,
+        }
+    }
+}
+
+impl Module for InstanceNorm {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let dims = input.dims();
+        let data = input.data_f32();
+        let gamma = self.gamma.data_f32();
+        let beta = self.beta.data_f32();
+        
+        let batch_size = dims[0];
+        let channels = dims[1];
+        let spatial_size: usize = dims[2..].iter().product();
+        
+        assert_eq!(channels, self.num_channels, "Input channels must match num_channels");
+        
+        let mut output = vec![0.0f32; data.len()];
+        
+        for b in 0..batch_size {
+            for c in 0..channels {
+                // Calculate mean and variance for this channel in this sample
+                let mut sum = 0.0f32;
+                let mut sum_sq = 0.0f32;
+                
+                for s in 0..spatial_size {
+                    let idx = b * channels * spatial_size + c * spatial_size + s;
+                    let val = data[idx];
+                    sum += val;
+                    sum_sq += val * val;
+                }
+                
+                let mean = sum / spatial_size as f32;
+                let variance = (sum_sq / spatial_size as f32) - (mean * mean);
+                let std = (variance + self.eps).sqrt();
+                
+                // Normalize and apply affine transformation
+                for s in 0..spatial_size {
+                    let idx = b * channels * spatial_size + c * spatial_size + s;
+                    let val = data[idx];
+                    let normalized = (val - mean) / std;
+                    output[idx] = gamma[c] * normalized + beta[c];
+                }
+            }
+        }
+        
+        Tensor::from_slice(&output, dims).unwrap()
+    }
+
+    fn parameters(&self) -> Vec<Tensor> {
+        vec![self.gamma.clone(), self.beta.clone()]
+    }
+
+    fn train(&mut self) { self.training = true; }
+    fn eval(&mut self) { self.training = false; }
+    fn is_training(&self) -> bool { self.training }
+}
 #[cfg(test)]
 mod tests {
     use super::*;

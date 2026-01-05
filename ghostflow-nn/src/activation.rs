@@ -157,3 +157,179 @@ impl Module for Softmax {
     fn eval(&mut self) {}
     fn is_training(&self) -> bool { false }
 }
+
+/// Swish activation module (parameterized version of SiLU)
+pub struct Swish {
+    beta: f32,
+}
+
+impl Swish {
+    pub fn new(beta: f32) -> Self {
+        Swish { beta }
+    }
+}
+
+impl Default for Swish {
+    fn default() -> Self { Self::new(1.0) }
+}
+
+impl Module for Swish {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let data = input.data_f32();
+        let result: Vec<f32> = data.iter()
+            .map(|&x| x / (1.0 + (-self.beta * x).exp()))
+            .collect();
+        Tensor::from_slice(&result, input.dims()).unwrap()
+    }
+    fn parameters(&self) -> Vec<Tensor> { vec![] }
+    fn train(&mut self) {}
+    fn eval(&mut self) {}
+    fn is_training(&self) -> bool { false }
+}
+
+/// Mish activation module
+/// f(x) = x * tanh(softplus(x))
+pub struct Mish;
+
+impl Mish {
+    pub fn new() -> Self { Mish }
+}
+
+impl Default for Mish {
+    fn default() -> Self { Self::new() }
+}
+
+impl Module for Mish {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let data = input.data_f32();
+        let result: Vec<f32> = data.iter()
+            .map(|&x| {
+                let softplus = (1.0 + x.exp()).ln();
+                x * softplus.tanh()
+            })
+            .collect();
+        Tensor::from_slice(&result, input.dims()).unwrap()
+    }
+    fn parameters(&self) -> Vec<Tensor> { vec![] }
+    fn train(&mut self) {}
+    fn eval(&mut self) {}
+    fn is_training(&self) -> bool { false }
+}
+
+/// ELU (Exponential Linear Unit) activation module
+pub struct ELU {
+    alpha: f32,
+}
+
+impl ELU {
+    pub fn new(alpha: f32) -> Self {
+        ELU { alpha }
+    }
+}
+
+impl Default for ELU {
+    fn default() -> Self { Self::new(1.0) }
+}
+
+impl Module for ELU {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let data = input.data_f32();
+        let result: Vec<f32> = data.iter()
+            .map(|&x| {
+                if x > 0.0 {
+                    x
+                } else {
+                    self.alpha * (x.exp() - 1.0)
+                }
+            })
+            .collect();
+        Tensor::from_slice(&result, input.dims()).unwrap()
+    }
+    fn parameters(&self) -> Vec<Tensor> { vec![] }
+    fn train(&mut self) {}
+    fn eval(&mut self) {}
+    fn is_training(&self) -> bool { false }
+}
+
+/// SELU (Scaled Exponential Linear Unit) activation module
+pub struct SELU {
+    alpha: f32,
+    scale: f32,
+}
+
+impl SELU {
+    pub fn new() -> Self {
+        // Standard SELU parameters
+        SELU {
+            alpha: 1.6732632423543772848170429916717,
+            scale: 1.0507009873554804934193349852946,
+        }
+    }
+    
+    pub fn with_params(alpha: f32, scale: f32) -> Self {
+        SELU { alpha, scale }
+    }
+}
+
+impl Default for SELU {
+    fn default() -> Self { Self::new() }
+}
+
+impl Module for SELU {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let data = input.data_f32();
+        let result: Vec<f32> = data.iter()
+            .map(|&x| {
+                if x > 0.0 {
+                    self.scale * x
+                } else {
+                    self.scale * self.alpha * (x.exp() - 1.0)
+                }
+            })
+            .collect();
+        Tensor::from_slice(&result, input.dims()).unwrap()
+    }
+    fn parameters(&self) -> Vec<Tensor> { vec![] }
+    fn train(&mut self) {}
+    fn eval(&mut self) {}
+    fn is_training(&self) -> bool { false }
+}
+
+/// Softplus activation module
+/// f(x) = ln(1 + exp(x))
+pub struct Softplus {
+    beta: f32,
+    threshold: f32,
+}
+
+impl Softplus {
+    pub fn new(beta: f32, threshold: f32) -> Self {
+        Softplus { beta, threshold }
+    }
+}
+
+impl Default for Softplus {
+    fn default() -> Self { Self::new(1.0, 20.0) }
+}
+
+impl Module for Softplus {
+    fn forward(&self, input: &Tensor) -> Tensor {
+        let data = input.data_f32();
+        let result: Vec<f32> = data.iter()
+            .map(|&x| {
+                let beta_x = self.beta * x;
+                if beta_x > self.threshold {
+                    // For large values, use linear approximation to avoid overflow
+                    x
+                } else {
+                    (1.0 + beta_x.exp()).ln() / self.beta
+                }
+            })
+            .collect();
+        Tensor::from_slice(&result, input.dims()).unwrap()
+    }
+    fn parameters(&self) -> Vec<Tensor> { vec![] }
+    fn train(&mut self) {}
+    fn eval(&mut self) {}
+    fn is_training(&self) -> bool { false }
+}
