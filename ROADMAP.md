@@ -55,11 +55,11 @@ This document outlines what's currently implemented and what's planned for futur
 ### v0.2.0 - Enhanced Deep Learning (Q2 2026)
 
 #### New Architectures
-- [ ] LSTM layers
-- [ ] GRU layers
-- [ ] Transformer blocks
-- [ ] Multi-head attention
-- [ ] Positional encoding
+- [x] LSTM layers ✅ **COMPLETED**
+- [x] GRU layers ✅ **COMPLETED**
+- [ ] Transformer blocks (Multi-head attention already implemented)
+- [x] Multi-head attention ✅ **COMPLETED**
+- [x] Positional encoding ✅ **COMPLETED**
 
 #### New Layers
 - [ ] Conv1d, Conv3d

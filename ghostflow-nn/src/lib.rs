@@ -14,6 +14,7 @@ pub mod attention;
 pub mod transformer;
 pub mod embedding;
 pub mod pooling;
+pub mod rnn;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -30,6 +31,7 @@ pub use transformer::{
 };
 pub use embedding::Embedding;
 pub use pooling::*;
+pub use rnn::{LSTM, LSTMCell, GRU, GRUCell};
 
 /// Prelude for convenient imports
 pub mod prelude {
@@ -39,4 +41,5 @@ pub mod prelude {
     pub use crate::attention::MultiHeadAttention;
     pub use crate::transformer::{TransformerEncoder, TransformerEncoderLayer};
     pub use crate::embedding::Embedding;
+    pub use crate::rnn::{LSTM, GRU};
 }
