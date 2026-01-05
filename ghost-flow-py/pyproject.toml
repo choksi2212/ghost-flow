@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "ghost-flow"
-version = "0.1.0"
+version = "0.3.0"
 description = "Blazingly fast machine learning framework - beats PyTorch and TensorFlow"
 readme = "README.md"
 requires-python = ">=3.8"

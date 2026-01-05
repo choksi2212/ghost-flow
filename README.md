@@ -12,10 +12,10 @@
 [![Tests](https://img.shields.io/badge/tests-66%2F66%20passing-success.svg)]()
 [![Downloads](https://img.shields.io/pypi/dm/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
 
-**Available in Python and Rust • Hand-Optimized Kernels • 50+ ML Algorithms**
+**Available in Python and Rust • Hand-Optimized Kernels • 77+ ML Algorithms**
 
 ```bash
-pip install ghost-flow
+pip install ghostflow
 ```
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples) • [Documentation](#-documentation)
@@ -33,7 +33,7 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 - 🦀 **Built in Rust** - Memory safety, zero-cost abstractions, and native performance
 - 🐍 **Python & Rust APIs** - Use from Python (`pip install ghost-flow`) or Rust (`cargo add ghost-flow`)
 - 🎮 **GPU Acceleration** - CUDA support with optimized kernels for NVIDIA GPUs
-- 🧠 **50+ ML Algorithms** - Decision trees, neural networks, clustering, dimensionality reduction, and more
+- 🧠 **77+ ML Algorithms** - XGBoost, LightGBM, GMM, HMM, CRF, neural networks, and more
 - 🛡️ **Memory Safe** - Rust's guarantees eliminate entire classes of bugs
 - ⚡ **Optimized Operations** - SIMD vectorization and hand-tuned kernels
 - 📦 **Production Ready** - Zero warnings, 66/66 tests passing, comprehensive documentation
@@ -92,13 +92,14 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 </tr>
 </table>
 
-### Machine Learning Algorithms (50+)
+### Machine Learning Algorithms (77+)
 
 <details>
 <summary><b>📊 Supervised Learning</b></summary>
 
 - **Linear Models**: Linear Regression, Ridge, Lasso, ElasticNet, Logistic Regression
-- **Tree-Based**: Decision Trees (CART), Random Forests, Gradient Boosting, AdaBoost, Extra Trees
+- **Tree-Based**: Decision Trees (CART), Random Forests, AdaBoost, Extra Trees
+- **Gradient Boosting**: XGBoost-style, LightGBM-style with histogram-based learning
 - **Support Vector Machines**: SVC, SVR with multiple kernels (RBF, Polynomial, Linear)
 - **Naive Bayes**: Gaussian, Multinomial, Bernoulli
 - **Nearest Neighbors**: KNN Classifier/Regressor with multiple distance metrics
@@ -110,6 +111,7 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 <summary><b>🎯 Unsupervised Learning</b></summary>
 
 - **Clustering**: K-Means, DBSCAN, Hierarchical, Mean Shift, Spectral Clustering
+- **Probabilistic Models**: Gaussian Mixture Models (GMM), Hidden Markov Models (HMM)
 - **Dimensionality Reduction**: PCA, t-SNE, UMAP, LDA, ICA, NMF
 - **Anomaly Detection**: Isolation Forest, One-Class SVM, Local Outlier Factor
 - **Matrix Factorization**: SVD, NMF, Sparse PCA
@@ -120,9 +122,9 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 <summary><b>🧠 Deep Learning</b></summary>
 
 - **Architectures**: CNN, RNN, LSTM, GRU, Transformer, Attention
-- **Layers**: Conv1d/2d/3d, MaxPool, AvgPool, BatchNorm, LayerNorm, Dropout
-- **Activations**: ReLU, GELU, Swish, Mish, Sigmoid, Tanh, Softmax
-- **Losses**: MSE, MAE, CrossEntropy, BCE, Focal Loss, Contrastive Loss
+- **Layers**: Conv1d/2d/3d, TransposeConv2d, MaxPool, AvgPool, GroupNorm, InstanceNorm, BatchNorm, LayerNorm, Dropout
+- **Activations**: ReLU, GELU, Swish, SiLU, Mish, ELU, SELU, Softplus, Sigmoid, Tanh, Softmax
+- **Losses**: MSE, MAE, CrossEntropy, BCE, Focal Loss, Contrastive Loss, Triplet Loss, Huber Loss
 
 </details>
 
@@ -131,8 +133,17 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 
 - **Cross-Validation**: K-Fold, Stratified K-Fold, Time Series Split
 - **Metrics**: Accuracy, Precision, Recall, F1, ROC-AUC, Confusion Matrix
-- **Hyperparameter Tuning**: Grid Search, Random Search
+- **Hyperparameter Tuning**: Bayesian Optimization, Random Search, Grid Search
 - **Feature Selection**: SelectKBest, RFE, Feature Importance
+- **Feature Engineering**: Polynomial Features, Feature Hashing, Target Encoding, One-Hot Encoding
+
+</details>
+
+<details>
+<summary><b>🔮 Structured Prediction</b></summary>
+
+- **Sequence Labeling**: Conditional Random Fields (CRF) for NER, POS tagging
+- **State-Space Models**: Hidden Markov Models (HMM) with Viterbi decoding
 
 </details>
 
@@ -484,36 +495,45 @@ cargo test --workspace
 
 ## 🎯 Roadmap
 
-### ✅ Current Status: v0.1.0 (Production Ready & Published)
+### ✅ Current Status: v0.3.0 (Production Ready & Published on PyPI)
 
 - [x] Core tensor operations with SIMD
 - [x] Automatic differentiation
-- [x] Neural network layers (Linear, Conv, RNN, LSTM, Transformer)
-- [x] 50+ ML algorithms
+- [x] Neural network layers (Linear, Conv1D/2D/3D, TransposeConv2D, RNN, LSTM, Transformer)
+- [x] Advanced normalization (GroupNorm, InstanceNorm, BatchNorm, LayerNorm)
+- [x] Extended activations (Swish, SiLU, Mish, ELU, SELU, Softplus)
+- [x] Advanced losses (Focal, Contrastive, Triplet, Huber)
+- [x] 77+ ML algorithms including XGBoost, LightGBM, GMM, HMM, CRF
+- [x] Feature engineering toolkit (Polynomial, Hashing, Target Encoding, One-Hot)
+- [x] Hyperparameter optimization (Bayesian, Random, Grid Search)
 - [x] GPU acceleration with hand-optimized CUDA kernels
-- [x] **Python bindings (PyPI: `pip install ghost-flow`)**
-- [x] **Rust crate (Crates.io: `cargo add ghost-flow`)**
-- [x] Comprehensive testing (66/66 tests passing)
+- [x] **Python bindings (PyPI: `pip install ghostflow`)**
+- [x] Rust crate (Crates.io: ready for v0.3.0 publish)
+- [x] Comprehensive testing (147+ tests passing)
 - [x] Zero warnings
 - [x] Production-ready documentation
 
-### 🚀 Upcoming Features (v0.2.0)
+### 🚀 Upcoming Features (v0.4.0 - Phase 4)
 
+- [ ] ONNX export/import for cross-framework compatibility
+- [ ] Model serving infrastructure (HTTP/gRPC)
+- [ ] Model quantization (INT8, FP16)
 - [ ] Distributed training (multi-GPU, multi-node)
-- [ ] ONNX export/import
-- [ ] More optimizers (LAMB, LARS, Lookahead)
-- [ ] Quantization support (INT8, FP16)
-- [ ] Model serving infrastructure
-- [ ] WebAssembly support
-- [ ] Mobile deployment (iOS, Android)
+- [ ] CatBoost-style gradient boosting
+- [ ] Advanced optimizers (AdamW, LAMB, RAdam, Lookahead)
+- [ ] Memory optimization (gradient checkpointing, efficient attention)
 
-### 🔮 Future (v0.3.0+)
+### 🔮 Future (v0.5.0+ - Phases 5-7)
 
-- [ ] AutoML and neural architecture search
-- [ ] Federated learning
-- [ ] Model compression and pruning
-- [ ] TensorBoard integration
-- [ ] Reinforcement learning algorithms
+- [ ] Complete Python API with scikit-learn compatibility
+- [ ] WebAssembly support for browser deployment
+- [ ] Model zoo with 50+ pre-trained models
+- [ ] Large Language Models (GPT, BERT architectures)
+- [ ] Diffusion models and Vision Transformers
+- [ ] Enterprise features (security, compliance, K8s operators)
+- [ ] Multi-platform hardware support (Apple Silicon, AMD/Intel GPUs, TPUs)
+
+See [FUTURE_ROADMAP_2026_2027.md](FUTURE_ROADMAP_2026_2027.md) for detailed roadmap.
 
 ---
 
