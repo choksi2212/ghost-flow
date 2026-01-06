@@ -300,14 +300,13 @@ mod tests {
 
     #[test]
     fn test_knn_classifier() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             1.0, 1.0,
             1.1, 1.1,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut knn = KNeighborsClassifier::new(3);
         knn.fit(&x, &y);
@@ -318,8 +317,8 @@ mod tests {
 
     #[test]
     fn test_knn_regressor() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
         
         let mut knn = KNeighborsRegressor::new(3);
         knn.fit(&x, &y);
@@ -328,3 +327,5 @@ mod tests {
         assert!(score >= 0.5);
     }
 }
+
+

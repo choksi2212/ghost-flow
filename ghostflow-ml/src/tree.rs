@@ -549,20 +549,19 @@ mod tests {
     #[test]
     fn test_decision_tree_classifier() {
         // Simple XOR-like problem
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
         
         let mut tree = DecisionTreeClassifier::new().max_depth(3);
         tree.fit(&x, &y);
         
         let predictions = tree.predict(&x);
-        let pred_data = predictions.data_f32();
+        let pred_data = predictions.storage().as_slice::<f32>().to_vec();
         
         // Should learn the XOR pattern
         assert_eq!(pred_data.len(), 4);
@@ -570,19 +569,20 @@ mod tests {
 
     #[test]
     fn test_decision_tree_regressor() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0, 3.0, 4.0, 5.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0,
         ], &[5, 1]).unwrap();
         
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
         
         let mut tree = DecisionTreeRegressor::new().max_depth(5);
         tree.fit(&x, &y);
         
         let predictions = tree.predict(&x);
-        let pred_data = predictions.data_f32();
+        let pred_data = predictions.storage().as_slice::<f32>().to_vec();
         
         // Should approximate y = 2x
         assert_eq!(pred_data.len(), 5);
     }
 }
+
+

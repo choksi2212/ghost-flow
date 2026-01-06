@@ -599,15 +599,14 @@ mod tests {
 
     #[test]
     fn test_random_forest_classifier() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
             0.5, 0.5,
         ], &[5, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0, 0.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0, 0.0], &[5]).unwrap();
         
         let mut rf = RandomForestClassifier::new(10).max_depth(3);
         rf.fit(&x, &y);
@@ -618,11 +617,10 @@ mod tests {
 
     #[test]
     fn test_gradient_boosting_regressor() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0, 3.0, 4.0, 5.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0,
         ], &[5, 1]).unwrap();
         
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
         
         let mut gb = GradientBoostingRegressor::new(50)
             .learning_rate(0.1)
@@ -633,3 +631,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[5]);
     }
 }
+
+

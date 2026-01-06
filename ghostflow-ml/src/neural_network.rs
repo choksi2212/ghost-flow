@@ -799,14 +799,13 @@ mod tests {
 
     #[test]
     fn test_perceptron() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0], &[4]).unwrap();
         
         let mut p = Perceptron::new().max_iter(100);
         p.fit(&x, &y);
@@ -817,14 +816,13 @@ mod tests {
 
     #[test]
     fn test_mlp_classifier() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
         
         let mut mlp = MLPClassifier::new(vec![4]).max_iter(100);
         mlp.fit(&x, &y);
@@ -835,8 +833,8 @@ mod tests {
 
     #[test]
     fn test_mlp_regressor() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
         
         let mut mlp = MLPRegressor::new(vec![10]).max_iter(500);
         mlp.fit(&x, &y);
@@ -845,3 +843,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[5]);
     }
 }
+
+

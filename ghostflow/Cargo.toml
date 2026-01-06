@@ -1,6 +1,6 @@
 [package]
 name = "ghost-flow"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 description = "Complete machine learning framework in Rust - tensors, neural networks, and 85+ ML algorithms with quantization and distributed training"
 license = "MIT OR Apache-2.0"
@@ -52,3 +52,11 @@ path = "../examples/advanced_ml_demo.rs"
 [[example]]
 name = "v0_3_0_complete_demo"
 path = "../examples/v0_3_0_complete_demo.rs"
+
+[[example]]
+name = "model_serving_demo"
+path = "../examples/model_serving_demo.rs"
+
+[[example]]
+name = "performance_demo"
+path = "../examples/performance_demo.rs"

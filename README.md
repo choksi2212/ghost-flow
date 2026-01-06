@@ -12,13 +12,15 @@
 [![Tests](https://img.shields.io/badge/tests-66%2F66%20passing-success.svg)]()
 [![Downloads](https://img.shields.io/pypi/dm/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
 
-**Available in Python and Rust • Hand-Optimized Kernels • 77+ ML Algorithms**
+**Available in Python and Rust • Hand-Optimized Kernels • 85+ ML Algorithms • Multi-Platform**
 
 ```bash
-pip install ghostflow
+pip install ghostflow  # Python
+cargo add ghost-flow   # Rust
+npm install ghostflow-wasm  # JavaScript/WASM
 ```
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples) • [Documentation](#-documentation)
+[Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples) • [Multi-Platform](#-multi-platform) • [Documentation](#-documentation)
 
 </div>
 
@@ -31,13 +33,14 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 ### ✨ Key Highlights
 
 - 🦀 **Built in Rust** - Memory safety, zero-cost abstractions, and native performance
-- 🐍 **Python & Rust APIs** - Use from Python (`pip install ghost-flow`) or Rust (`cargo add ghost-flow`)
+- 🌐 **Multi-Platform** - Web (WASM), Mobile (FFI), Desktop, Server, Embedded
+- 🗣️ **Multi-Language** - Rust, JavaScript, C, C++, Python, Go, Java, and more
 - 🎮 **GPU Acceleration** - CUDA support with optimized kernels for NVIDIA GPUs
-- 🧠 **77+ ML Algorithms** - XGBoost, LightGBM, GMM, HMM, CRF, neural networks, and more
+- 🧠 **85+ ML Algorithms** - XGBoost, LightGBM, GMM, HMM, CRF, neural networks, and more
 - 🛡️ **Memory Safe** - Rust's guarantees eliminate entire classes of bugs
 - ⚡ **Optimized Operations** - SIMD vectorization and hand-tuned kernels
-- 📦 **Production Ready** - Zero warnings, 66/66 tests passing, comprehensive documentation
-- 🌐 **Cross-Platform** - Works on Windows, Linux, and macOS with CPU or GPU
+- 📦 **Production Ready** - Quantization, distributed training, model serving
+- 🔌 **Easy Integration** - REST API, WASM, C FFI for any language
 
 ---
 

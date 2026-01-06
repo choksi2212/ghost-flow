@@ -563,26 +563,28 @@ mod tests {
 
     #[test]
     fn test_relu() {
-        let x = Tensor::from_slice(&[-1.0, 0.0, 1.0, 2.0], &[4]).unwrap();
+        let x = Tensor::from_slice(&[-1.0f32, 0.0, 1.0, 2.0], &[4]).unwrap();
         let relu = ReLU::new();
         let y = relu.forward(&x);
-        let y_data = y.data_f32();
+        let y_data = y.storage().as_slice::<f32>().to_vec();
         assert_eq!(y_data, vec![0.0, 0.0, 1.0, 2.0]);
     }
 
     #[test]
     fn test_sigmoid() {
-        let x = Tensor::from_slice(&[0.0], &[1]).unwrap();
+        let x = Tensor::from_slice(&[0.0f32], &[1]).unwrap();
         let sigmoid = Sigmoid::new();
         let y = sigmoid.forward(&x);
-        assert!((y.data_f32()[0] - 0.5).abs() < 1e-6);
+        assert!((y.storage().as_slice::<f32>().to_vec()[0] - 0.5).abs() < 1e-6);
     }
 
     #[test]
     fn test_gelu() {
-        let x = Tensor::from_slice(&[0.0, 1.0, -1.0], &[3]).unwrap();
+        let x = Tensor::from_slice(&[0.0f32, 1.0, -1.0], &[3]).unwrap();
         let gelu = GELU::new();
         let y = gelu.forward(&x);
-        assert!(y.data_f32()[0].abs() < 1e-6); // GELU(0) = 0
+        assert!(y.storage().as_slice::<f32>().to_vec()[0].abs() < 1e-6); // GELU(0) = 0
     }
 }
+
+

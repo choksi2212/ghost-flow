@@ -420,8 +420,8 @@ mod tests {
 
     #[test]
     fn test_isotonic_regression() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
-        let y = Tensor::from_slice(&[1.0, 3.0, 2.0, 4.0, 5.0], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 3.0, 2.0, 4.0, 5.0], &[5]).unwrap();
 
         let mut ir = IsotonicRegression::new();
         let transformed = ir.fit_transform(&x, &y);
@@ -431,14 +431,16 @@ mod tests {
 
     #[test]
     fn test_platt_scaling() {
-        let scores = Tensor::from_slice(&[-2.0, -1.0, 0.0, 1.0, 2.0], &[5]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0, 1.0], &[5]).unwrap();
+        let scores = Tensor::from_slice(&[-2.0f32, -1.0, 0.0, 1.0, 2.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0, 1.0], &[5]).unwrap();
 
         let mut ps = PlattScaling::new();
         let probs = ps.fit_transform(&scores, &y);
         
-        let probs_data = probs.data_f32();
+        let probs_data = probs.storage().as_slice::<f32>().to_vec();
         // Probabilities should be between 0 and 1
         assert!(probs_data.iter().all(|&p| p >= 0.0 && p <= 1.0));
     }
 }
+
+

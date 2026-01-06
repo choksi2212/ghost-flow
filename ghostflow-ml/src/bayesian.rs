@@ -552,8 +552,8 @@ mod tests {
 
     #[test]
     fn test_bayesian_ridge() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
 
         let mut br = BayesianRidge::new().n_iter(100);
         br.fit(&x, &y);
@@ -564,13 +564,12 @@ mod tests {
 
     #[test]
     fn test_ard_regression() {
-        let x = Tensor::from_slice(&[
-            1.0, 0.0,
+        let x = Tensor::from_slice(&[1.0f32, 0.0,
             2.0, 0.0,
             3.0, 0.0,
             4.0, 0.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0], &[4]).unwrap();
 
         let mut ard = ARDRegression::new().n_iter(100);
         ard.fit(&x, &y);
@@ -579,3 +578,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

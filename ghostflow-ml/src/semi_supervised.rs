@@ -458,15 +458,14 @@ mod tests {
     #[test]
     fn test_label_propagation() {
         // Some labeled, some unlabeled (-1)
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             1.0, 1.0,
             1.1, 1.1,
             0.5, 0.5,  // Unlabeled
         ], &[5, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0, -1.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0, -1.0], &[5]).unwrap();
 
         let mut lp = LabelPropagation::new().gamma(10.0);
         lp.fit(&x, &y);
@@ -477,15 +476,14 @@ mod tests {
 
     #[test]
     fn test_label_spreading() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             1.0, 1.0,
             1.1, 1.1,
             0.5, 0.5,
         ], &[5, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0, -1.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0, -1.0], &[5]).unwrap();
 
         let mut ls = LabelSpreading::new().alpha(0.2);
         ls.fit(&x, &y);
@@ -494,3 +492,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[5]);
     }
 }
+
+

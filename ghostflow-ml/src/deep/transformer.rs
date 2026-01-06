@@ -969,9 +969,9 @@ mod tests {
 
     #[test]
     fn test_scaled_dot_product_attention() {
-        let q = Tensor::from_slice(&[1.0, 0.0, 0.0, 1.0], &[1, 2, 2]).unwrap();
-        let k = Tensor::from_slice(&[1.0, 0.0, 0.0, 1.0], &[1, 2, 2]).unwrap();
-        let v = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[1, 2, 2]).unwrap();
+        let q = Tensor::from_slice(&[1.0f32, 0.0, 0.0, 1.0], &[1, 2, 2]).unwrap();
+        let k = Tensor::from_slice(&[1.0f32, 0.0, 0.0, 1.0], &[1, 2, 2]).unwrap();
+        let v = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[1, 2, 2]).unwrap();
 
         let attn = ScaledDotProductAttention::new(2);
         let output = attn.forward(&q, &k, &v, None);
@@ -980,7 +980,7 @@ mod tests {
 
     #[test]
     fn test_multi_head_attention() {
-        let x = Tensor::from_slice(&[1.0; 16], &[1, 2, 8]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32; 16], &[1, 2, 8]).unwrap();
         let mut mha = MultiHeadAttention::new(8, 2);
         let output = mha.forward(&x, None);
         assert_eq!(output.dims(), &[1, 2, 8]);
@@ -988,17 +988,17 @@ mod tests {
 
     #[test]
     fn test_positional_encoding() {
-        let x = Tensor::from_slice(&[0.0; 16], &[1, 2, 8]).unwrap();
+        let x = Tensor::from_slice(&[0.0f32; 16], &[1, 2, 8]).unwrap();
         let pe = PositionalEncoding::new(8, 100);
         let output = pe.forward(&x);
         assert_eq!(output.dims(), &[1, 2, 8]);
         // Output should not be all zeros due to positional encoding
-        assert!(output.data_f32().iter().any(|&v| v != 0.0));
+        assert!(output.storage().as_slice::<f32>().to_vec().iter().any(|&v| v != 0.0));
     }
 
     #[test]
     fn test_transformer_encoder_layer() {
-        let x = Tensor::from_slice(&[1.0; 32], &[1, 4, 8]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32; 32], &[1, 4, 8]).unwrap();
         let mut layer = TransformerEncoderLayer::new(8, 2, 32);
         let output = layer.forward(&x, None);
         assert_eq!(output.dims(), &[1, 4, 8]);
@@ -1006,7 +1006,7 @@ mod tests {
 
     #[test]
     fn test_transformer_encoder() {
-        let x = Tensor::from_slice(&[1.0; 32], &[1, 4, 8]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32; 32], &[1, 4, 8]).unwrap();
         let mut encoder = TransformerEncoder::new(2, 8, 2, 32);
         let output = encoder.forward(&x, None);
         assert_eq!(output.dims(), &[1, 4, 8]);
@@ -1015,7 +1015,7 @@ mod tests {
     #[test]
     fn test_causal_mask() {
         let mask = Transformer::generate_causal_mask(4);
-        let mask_data = mask.data_f32();
+        let mask_data = mask.storage().as_slice::<f32>().to_vec();
         // Lower triangular should be 1s
         assert_eq!(mask_data[0], 1.0);  // [0,0]
         assert_eq!(mask_data[1], 0.0);  // [0,1]
@@ -1023,3 +1023,5 @@ mod tests {
         assert_eq!(mask_data[5], 1.0);  // [1,1]
     }
 }
+
+

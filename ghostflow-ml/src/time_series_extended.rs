@@ -528,8 +528,7 @@ mod tests {
 
     #[test]
     fn test_sarima() {
-        let y = Tensor::from_slice(&[
-            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
             2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0,
         ], &[24]).unwrap();
 
@@ -541,8 +540,7 @@ mod tests {
 
     #[test]
     fn test_stl() {
-        let y = Tensor::from_slice(&[
-            1.0, 2.0, 3.0, 2.0, 1.0, 2.0, 3.0, 2.0, 1.0, 2.0, 3.0, 2.0,
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 2.0, 1.0, 2.0, 3.0, 2.0, 1.0, 2.0, 3.0, 2.0,
         ], &[12]).unwrap();
 
         let mut stl = STLDecomposition::new(4);
@@ -555,7 +553,7 @@ mod tests {
 
     #[test]
     fn test_acf_pacf() {
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 2.0], &[10]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 2.0], &[10]).unwrap();
         
         let acf_vals = acf(&y, 5);
         assert_eq!(acf_vals.len(), 6);
@@ -565,5 +563,7 @@ mod tests {
         assert_eq!(pacf_vals.len(), 6);
     }
 }
+
+
 
 

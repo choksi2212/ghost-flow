@@ -443,7 +443,7 @@ mod tests {
 
     #[test]
     fn test_simple_exp_smoothing() {
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
         let mut ses = SimpleExponentialSmoothing::new(0.3);
         ses.fit(&y);
         let pred = ses.predict(3);
@@ -452,7 +452,7 @@ mod tests {
 
     #[test]
     fn test_holt_linear() {
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
         let mut holt = HoltLinear::new(0.3, 0.1);
         holt.fit(&y);
         let pred = holt.predict(3);
@@ -461,9 +461,11 @@ mod tests {
 
     #[test]
     fn test_moving_average() {
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5]).unwrap();
         let ma = MovingAverage::new(3);
         let result = ma.transform(&y);
         assert_eq!(result.dims(), &[5]);
     }
 }
+
+

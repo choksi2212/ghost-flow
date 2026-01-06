@@ -444,11 +444,10 @@ mod tests {
 
     #[test]
     fn test_gp_regressor() {
-        let x = Tensor::from_slice(&[
-            0.0, 1.0, 2.0, 3.0, 4.0,
+        let x = Tensor::from_slice(&[0.0f32, 1.0, 2.0, 3.0, 4.0,
         ], &[5, 1]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 1.0, 4.0, 9.0, 16.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 4.0, 9.0, 16.0], &[5]).unwrap();
         
         let mut gpr = GaussianProcessRegressor::new(GPKernel::rbf(1.0)).alpha(0.1);
         gpr.fit(&x, &y);
@@ -459,14 +458,13 @@ mod tests {
 
     #[test]
     fn test_gp_classifier() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0], &[4]).unwrap();
         
         let mut gpc = GaussianProcessClassifier::new(GPKernel::rbf(1.0));
         gpc.fit(&x, &y);
@@ -475,3 +473,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

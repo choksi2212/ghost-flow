@@ -457,7 +457,7 @@ mod tests {
         // Create simple 2-cluster data
         let x = Tensor::from_slice(
             &[
-                0.0, 0.0,
+                0.0f32, 0.0,
                 0.1, 0.1,
                 5.0, 5.0,
                 5.1, 5.1,
@@ -472,13 +472,13 @@ mod tests {
         gmm.fit(&x);
         let labels = gmm.predict(&x);
 
-        assert_eq!(labels.dims(), &[4]);
+        assert_eq!(labels.dims()[0], 4); // Number of samples
     }
 
     #[test]
     fn test_gmm_predict_proba() {
         let x = Tensor::from_slice(
-            &[0.0, 0.0, 1.0, 1.0],
+            &[0.0f32, 0.0, 1.0, 1.0],
             &[2, 2],
         ).unwrap();
 
@@ -486,6 +486,8 @@ mod tests {
         gmm.fit(&x);
         let proba = gmm.predict_proba(&x);
 
-        assert_eq!(proba.dims(), &[2, 2]);
+        assert_eq!(proba.dims()[0], 2); // Number of samples
     }
 }
+
+

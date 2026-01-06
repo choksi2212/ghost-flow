@@ -728,7 +728,7 @@ mod tests {
 
     #[test]
     fn test_factor_analysis() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], &[3, 3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], &[3, 3]).unwrap();
         let mut fa = FactorAnalysis::new(2);
         let result = fa.fit_transform(&x);
         assert_eq!(result.dims(), &[3, 2]);
@@ -736,7 +736,7 @@ mod tests {
 
     #[test]
     fn test_fast_ica() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
         let mut ica = FastICA::new(2);
         let result = ica.fit_transform(&x);
         assert_eq!(result.dims(), &[4, 2]);
@@ -744,9 +744,11 @@ mod tests {
 
     #[test]
     fn test_sparse_pca() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[2, 3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[2, 3]).unwrap();
         let mut spca = SparsePCA::new(2);
         let result = spca.fit_transform(&x);
         assert_eq!(result.dims(), &[2, 2]);
     }
 }
+
+

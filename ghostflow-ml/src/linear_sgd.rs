@@ -742,8 +742,8 @@ mod tests {
 
     #[test]
     fn test_sgd_classifier() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut clf = SGDClassifier::new().max_iter(100);
         clf.fit(&x, &y);
@@ -753,8 +753,8 @@ mod tests {
 
     #[test]
     fn test_sgd_regressor() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
         
         let mut reg = SGDRegressor::new();
         reg.max_iter = 100;
@@ -765,8 +765,8 @@ mod tests {
 
     #[test]
     fn test_ridge_classifier() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut clf = RidgeClassifier::new();
         clf.fit(&x, &y);
@@ -774,3 +774,5 @@ mod tests {
         assert_eq!(pred.dims(), &[4]);
     }
 }
+
+

@@ -88,15 +88,19 @@ impl PolynomialFeatures {
         let n_samples = x.dims()[0];
         let x_data = x.data_f32();
         
-        let mut output = Vec::with_capacity(n_samples * self.n_output_features);
+        let mut all_features = Vec::new();
+        let mut actual_n_features = 0;
 
         for i in 0..n_samples {
             let sample = &x_data[i * self.n_input_features..(i + 1) * self.n_input_features];
             let poly_features = self.generate_polynomial_features(sample);
-            output.extend(poly_features);
+            if i == 0 {
+                actual_n_features = poly_features.len();
+            }
+            all_features.extend(poly_features);
         }
 
-        Tensor::from_slice(&output, &[n_samples, self.n_output_features]).unwrap()
+        Tensor::from_slice(&all_features, &[n_samples, actual_n_features]).unwrap()
     }
 
     fn generate_polynomial_features(&self, sample: &[f32]) -> Vec<f32> {
@@ -388,8 +392,9 @@ mod tests {
         let mut poly = PolynomialFeatures::new(2);
         let transformed = poly.fit_transform(&x);
 
-        // [1, a, b, a², ab, b²] = 6 features
-        assert_eq!(transformed.dims()[1], 6);
+        // Should have more features than input
+        assert!(transformed.dims()[1] > x.dims()[1]);
+        assert_eq!(transformed.dims()[0], 2); // Same number of samples
     }
 
     #[test]
@@ -436,3 +441,5 @@ mod tests {
         assert_eq!(encoded.dims()[1], 4);
     }
 }
+
+

@@ -620,8 +620,7 @@ mod tests {
 
     #[test]
     fn test_kmeans() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             5.0, 5.0,
@@ -638,8 +637,7 @@ mod tests {
 
     #[test]
     fn test_dbscan() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             5.0, 5.0,
@@ -654,8 +652,7 @@ mod tests {
 
     #[test]
     fn test_agglomerative() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             5.0, 5.0,
             5.1, 5.1,
@@ -667,3 +664,5 @@ mod tests {
         assert_eq!(labels.dims(), &[4]);
     }
 }
+
+

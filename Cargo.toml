@@ -10,10 +10,13 @@ members = [
     "ghostflow-cuda",
     "ghostflow-ml",
     "ghost-flow-py",
+    "ghostflow-wasm",
+    "ghostflow-ffi",
+    "ghostflow-serve",
 ]
 
 [workspace.package]
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 authors = ["GhostFlow Team"]
 license = "MIT OR Apache-2.0"
@@ -44,6 +47,7 @@ smallvec = "1.11"
 # SIMD and performance
 wide = "0.7"
 pulp = "0.18"
+num_cpus = "1.16"
 
 # BLAS for optimized linear algebra
 blas-src = { version = "0.10", features = ["openblas"] }

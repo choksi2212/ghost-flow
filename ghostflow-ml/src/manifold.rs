@@ -890,8 +890,7 @@ mod tests {
 
     #[test]
     fn test_tsne() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             5.0, 5.0,
             5.1, 5.1,
@@ -905,8 +904,7 @@ mod tests {
 
     #[test]
     fn test_mds() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             1.0, 0.0,
             0.0, 1.0,
             1.0, 1.0,
@@ -920,8 +918,7 @@ mod tests {
 
     #[test]
     fn test_isomap() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             1.0, 0.0,
             2.0, 0.0,
             0.0, 1.0,
@@ -934,3 +931,5 @@ mod tests {
         assert_eq!(embedding.dims(), &[5, 2]);
     }
 }
+
+

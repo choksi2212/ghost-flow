@@ -544,14 +544,13 @@ mod tests {
 
     #[test]
     fn test_lda() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0,
             1.5, 1.8,
             5.0, 8.0,
             6.0, 9.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut lda = LinearDiscriminantAnalysis::new();
         lda.fit(&x, &y);
@@ -562,14 +561,13 @@ mod tests {
 
     #[test]
     fn test_qda() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0,
             1.5, 1.8,
             5.0, 8.0,
             6.0, 9.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut qda = QuadraticDiscriminantAnalysis::new().reg_param(0.1);
         qda.fit(&x, &y);
@@ -578,3 +576,5 @@ mod tests {
         assert!(score >= 0.5);
     }
 }
+
+

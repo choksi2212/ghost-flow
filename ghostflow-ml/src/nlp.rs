@@ -661,3 +661,5 @@ mod tests {
         assert!(w2v.get_vector("the").is_some());
     }
 }
+
+

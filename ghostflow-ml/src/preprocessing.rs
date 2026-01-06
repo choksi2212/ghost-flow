@@ -422,8 +422,7 @@ mod tests {
 
     #[test]
     fn test_standard_scaler() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0,
             3.0, 4.0,
             5.0, 6.0,
         ], &[3, 2]).unwrap();
@@ -434,15 +433,14 @@ mod tests {
         assert_eq!(scaled.dims(), &[3, 2]);
         
         // Check mean is ~0
-        let scaled_data = scaled.data_f32();
+        let scaled_data = scaled.storage().as_slice::<f32>().to_vec();
         let mean: f32 = scaled_data.iter().sum::<f32>() / scaled_data.len() as f32;
         assert!(mean.abs() < 0.1);
     }
 
     #[test]
     fn test_minmax_scaler() {
-        let x = Tensor::from_slice(&[
-            0.0, 10.0,
+        let x = Tensor::from_slice(&[0.0f32, 10.0,
             5.0, 20.0,
             10.0, 30.0,
         ], &[3, 2]).unwrap();
@@ -450,21 +448,20 @@ mod tests {
         let mut scaler = MinMaxScaler::new();
         let scaled = scaler.fit_transform(&x);
         
-        let scaled_data = scaled.data_f32();
+        let scaled_data = scaled.storage().as_slice::<f32>().to_vec();
         assert!(scaled_data.iter().all(|&v| v >= 0.0 && v <= 1.0));
     }
 
     #[test]
     fn test_train_test_split() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0,
             3.0, 4.0,
             5.0, 6.0,
             7.0, 8.0,
             9.0, 10.0,
         ], &[5, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 1.0, 0.0, 1.0, 0.0], &[5]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 0.0, 1.0, 0.0], &[5]).unwrap();
 
         let (x_train, x_test, y_train, y_test) = train_test_split(&x, &y, 0.4, false);
         
@@ -474,3 +471,5 @@ mod tests {
         assert_eq!(y_test.dims()[0], 2);
     }
 }
+
+

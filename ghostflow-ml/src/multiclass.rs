@@ -461,10 +461,9 @@ mod tests {
 
     #[test]
     fn test_one_vs_rest() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 2.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 2.0, 1.0], &[4]).unwrap();
 
         let mut clf = OneVsRestClassifier::new();
         clf.fit(&x, &y);
@@ -474,10 +473,9 @@ mod tests {
 
     #[test]
     fn test_one_vs_one() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 2.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 2.0, 1.0], &[4]).unwrap();
 
         let mut clf = OneVsOneClassifier::new();
         clf.fit(&x, &y);
@@ -485,3 +483,5 @@ mod tests {
         assert_eq!(pred.dims(), &[4]);
     }
 }
+
+

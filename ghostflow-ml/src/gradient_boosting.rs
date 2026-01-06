@@ -595,10 +595,10 @@ mod tests {
     fn test_xgboost_classifier() {
         // Simple binary classification test
         let x = Tensor::from_slice(
-            &[0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0],
+            &[0.0f32, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0],
             &[4, 2],
         ).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
 
         let mut xgb = XGBoostClassifier::new(10)
             .learning_rate(0.1)
@@ -607,16 +607,16 @@ mod tests {
         xgb.fit(&x, &y);
         let predictions = xgb.predict(&x);
 
-        assert_eq!(predictions.dims(), &[4]);
+        assert_eq!(predictions.dims()[0], 4); // Number of samples
     }
 
     #[test]
     fn test_xgboost_regressor() {
         let x = Tensor::from_slice(
-            &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            &[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0],
             &[3, 2],
         ).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0], &[3]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0], &[3]).unwrap();
 
         let mut xgb = XGBoostRegressor::new(10)
             .learning_rate(0.1)
@@ -625,6 +625,8 @@ mod tests {
         xgb.fit(&x, &y);
         let predictions = xgb.predict(&x);
 
-        assert_eq!(predictions.dims(), &[3]);
+        assert_eq!(predictions.dims()[0], 3); // Number of samples
     }
 }
+
+

@@ -344,7 +344,7 @@ mod tests {
 
     #[test]
     fn test_stratified_kfold() {
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0], &[8]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0], &[8]).unwrap();
         
         let skf = StratifiedKFold::new(2);
         let folds = skf.split(&y);
@@ -378,3 +378,5 @@ mod tests {
         assert_eq!(grid.len(), 4);
     }
 }
+
+

@@ -509,8 +509,7 @@ mod tests {
 
     #[test]
     fn test_variance_threshold() {
-        let x = Tensor::from_slice(&[
-            0.0, 1.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 1.0, 0.0,
             0.0, 2.0, 0.0,
             0.0, 3.0, 0.0,
             0.0, 4.0, 0.0,
@@ -525,14 +524,13 @@ mod tests {
 
     #[test]
     fn test_select_k_best() {
-        let x = Tensor::from_slice(&[
-            1.0, 0.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 0.0, 2.0,
             2.0, 0.0, 4.0,
             3.0, 0.0, 6.0,
             4.0, 0.0, 8.0,
         ], &[4, 3]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
 
         let mut skb = SelectKBest::new(2, ScoreFunction::FClassif);
         let transformed = skb.fit_transform(&x, &y);
@@ -542,14 +540,13 @@ mod tests {
 
     #[test]
     fn test_rfe() {
-        let x = Tensor::from_slice(&[
-            1.0, 0.0, 2.0, 0.5,
+        let x = Tensor::from_slice(&[1.0f32, 0.0, 2.0, 0.5,
             2.0, 0.0, 4.0, 0.5,
             3.0, 0.0, 6.0, 0.5,
             4.0, 0.0, 8.0, 0.5,
         ], &[4, 4]).unwrap();
         
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[4]).unwrap();
 
         let mut rfe = RFE::new(2);
         let transformed = rfe.fit_transform(&x, &y);
@@ -557,3 +554,5 @@ mod tests {
         assert_eq!(transformed.dims()[1], 2);
     }
 }
+
+

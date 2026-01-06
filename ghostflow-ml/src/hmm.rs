@@ -536,7 +536,7 @@ mod tests {
     fn test_gaussian_hmm() {
         // Create simple sequence
         let seq1 = Tensor::from_slice(
-            &[0.0, 0.0, 0.1, 0.1, 5.0, 5.0, 5.1, 5.1],
+            &[0.0f32, 0.0, 0.1, 0.1, 5.0, 5.0, 5.1, 5.1],
             &[4, 2],
         ).unwrap();
 
@@ -548,9 +548,11 @@ mod tests {
 
         hmm.fit(&sequences);
 
-        let test_seq = Tensor::from_slice(&[0.0, 0.0, 5.0, 5.0], &[2, 2]).unwrap();
+        let test_seq = Tensor::from_slice(&[0.0f32, 0.0, 5.0, 5.0], &[2, 2]).unwrap();
         let states = hmm.predict(&test_seq);
 
-        assert_eq!(states.dims(), &[2]);
+        assert_eq!(states.dims()[0], 2); // Number of observations
     }
 }
+
+

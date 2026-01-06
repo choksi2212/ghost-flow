@@ -515,8 +515,8 @@ mod tests {
 
     #[test]
     fn test_kernel_ridge() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
         
         let mut kr = KernelRidge::new().kernel(Kernel::rbf(0.5));
         kr.fit(&x, &y);
@@ -526,10 +526,12 @@ mod tests {
 
     #[test]
     fn test_kernel_pca() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
         
         let mut kpca = KernelPCA::new(2).kernel(Kernel::rbf(1.0));
         let result = kpca.fit_transform(&x);
         assert_eq!(result.dims(), &[4, 2]);
     }
 }
+
+

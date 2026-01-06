@@ -396,8 +396,8 @@ mod tests {
 
     #[test]
     fn test_accuracy() {
-        let y_true = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
-        let y_pred = Tensor::from_slice(&[0.0, 1.0, 0.0, 0.0], &[4]).unwrap();
+        let y_true = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y_pred = Tensor::from_slice(&[0.0f32, 1.0, 0.0, 0.0], &[4]).unwrap();
         
         let acc = accuracy_score(&y_true, &y_pred);
         assert!((acc - 0.75).abs() < 0.01);
@@ -405,8 +405,8 @@ mod tests {
 
     #[test]
     fn test_mse() {
-        let y_true = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[4]).unwrap();
-        let y_pred = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[4]).unwrap();
+        let y_true = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[4]).unwrap();
+        let y_pred = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[4]).unwrap();
         
         let mse = mean_squared_error(&y_true, &y_pred);
         assert!(mse < 0.01);
@@ -414,10 +414,12 @@ mod tests {
 
     #[test]
     fn test_r2() {
-        let y_true = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[4]).unwrap();
-        let y_pred = Tensor::from_slice(&[1.1, 2.1, 2.9, 3.9], &[4]).unwrap();
+        let y_true = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[4]).unwrap();
+        let y_pred = Tensor::from_slice(&[1.1f32, 2.1, 2.9, 3.9], &[4]).unwrap();
         
         let r2 = r2_score(&y_true, &y_pred);
         assert!(r2 > 0.9);
     }
 }
+
+

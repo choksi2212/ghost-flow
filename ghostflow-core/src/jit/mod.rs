@@ -5,7 +5,7 @@
 
 use std::collections::HashMap;
 use std::hash::Hash;
-use crate::fusion::ComputeGraph;
+// use crate::fusion::ComputeGraph;
 
 /// JIT-compiled kernel
 #[derive(Clone)]

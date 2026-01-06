@@ -20,8 +20,13 @@ pub mod serialize;
 
 // Phase 4: Advanced optimizations
 pub mod fusion;
-pub mod jit;
+// pub mod jit; // Temporarily disabled - needs refactoring
 pub mod layout;
+
+// Performance optimizations
+pub mod simd_ops;
+pub mod memory;
+pub mod profiler;
 
 pub use dtype::DType;
 pub use shape::{Shape, Strides};
@@ -33,8 +38,13 @@ pub use serialize::{StateDict, save_state_dict, load_state_dict, Serializable};
 
 // Phase 4 exports
 pub use fusion::{FusionEngine, ComputeGraph, FusionPattern};
-pub use jit::{JitCompiler, CompiledKernel};
+// pub use jit::{JitCompiler, CompiledKernel}; // Temporarily disabled - needs refactoring
 pub use layout::{LayoutOptimizer, MemoryLayout, DeviceInfo};
+
+// Performance exports
+pub use simd_ops::{simd_add_f32, simd_mul_f32, simd_dot_f32, simd_relu_f32};
+pub use memory::{MemoryPool, MemoryStats, MemoryLayoutOptimizer, TrackedAllocator};
+pub use profiler::{Profiler, ProfileScope, Benchmark, BenchmarkResult, global_profiler};
 
 /// Prelude for convenient imports
 #[allow(unused_imports)]
@@ -42,7 +52,7 @@ pub mod prelude {
     pub use crate::{Tensor, DType, Shape, Device, Cpu};
     pub use crate::tensor_ops::*;
     pub use crate::serialize::{StateDict, save_state_dict, load_state_dict, Serializable};
-    pub use crate::{FusionEngine, JitCompiler, LayoutOptimizer};
+    pub use crate::{FusionEngine, LayoutOptimizer};
 }
 
 /// Tensor operations trait extensions

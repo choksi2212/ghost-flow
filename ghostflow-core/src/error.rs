@@ -37,6 +37,15 @@ pub enum GhostError {
 
     #[error("Invalid operation: {0}")]
     InvalidOperation(String),
+
+    #[error("IO error: {0}")]
+    IOError(String),
+
+    #[error("Invalid format: {0}")]
+    InvalidFormat(String),
+
+    #[error("Not implemented: {0}")]
+    NotImplemented(String),
 }
 
 /// Result type alias for GhostFlow operations

@@ -541,16 +541,16 @@ mod tests {
 
     #[test]
     fn test_mse_loss() {
-        let pred = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
-        let targ = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
+        let pred = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
+        let targ = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
         let loss = MSELoss::new();
         assert!((loss.forward(&pred, &targ) - 0.0).abs() < 1e-6);
     }
 
     #[test]
     fn test_bce_loss() {
-        let pred = Tensor::from_slice(&[0.9, 0.1], &[2]).unwrap();
-        let targ = Tensor::from_slice(&[1.0, 0.0], &[2]).unwrap();
+        let pred = Tensor::from_slice(&[0.9f32, 0.1], &[2]).unwrap();
+        let targ = Tensor::from_slice(&[1.0f32, 0.0], &[2]).unwrap();
         let loss = BCELoss::new();
         let l = loss.forward(&pred, &targ);
         assert!(l > 0.0 && l < 1.0);
@@ -913,3 +913,5 @@ mod tests {
         assert!(loss >= 0.0);
     }
 }
+
+

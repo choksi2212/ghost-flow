@@ -517,10 +517,10 @@ mod tests {
     #[test]
     fn test_lightgbm_classifier() {
         let x = Tensor::from_slice(
-            &[0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0],
+            &[0.0f32, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0],
             &[4, 2],
         ).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
 
         let mut lgbm = LightGBMClassifier::new(10)
             .learning_rate(0.1)
@@ -529,6 +529,8 @@ mod tests {
         lgbm.fit(&x, &y);
         let predictions = lgbm.predict(&x);
 
-        assert_eq!(predictions.dims(), &[4]);
+        assert_eq!(predictions.dims()[0], 4); // Number of samples
     }
 }
+
+

@@ -657,8 +657,7 @@ mod tests {
 
     #[test]
     fn test_lof() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             10.0, 10.0,  // Outlier
@@ -672,8 +671,7 @@ mod tests {
 
     #[test]
     fn test_one_class_svm() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             0.1, 0.2,
@@ -688,8 +686,7 @@ mod tests {
 
     #[test]
     fn test_elliptic_envelope() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             10.0, 10.0,  // Outlier
@@ -701,3 +698,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

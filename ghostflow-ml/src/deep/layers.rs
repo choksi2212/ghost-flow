@@ -517,7 +517,7 @@ mod tests {
 
     #[test]
     fn test_dense() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
         let mut dense = Dense::new(2, 3);
         let out = dense.forward(&x, true);
         assert_eq!(out.dims(), &[2, 3]);
@@ -525,7 +525,7 @@ mod tests {
 
     #[test]
     fn test_dropout() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
         let mut dropout = Dropout::new(0.5);
         let out = dropout.forward(&x, true);
         assert_eq!(out.dims(), &[2, 2]);
@@ -533,7 +533,7 @@ mod tests {
 
     #[test]
     fn test_batch_norm() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
         let mut bn = BatchNorm::new(2);
         let out = bn.forward(&x, true);
         assert_eq!(out.dims(), &[3, 2]);
@@ -956,3 +956,5 @@ impl BatchNorm2d {
 }
 
 /// Layer Normalization
+
+

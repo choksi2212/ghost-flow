@@ -551,8 +551,8 @@ mod tests {
 
     #[test]
     fn test_random_over_sampler() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0], &[4]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], &[4, 2]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0], &[4]).unwrap();
         
         let ros = RandomOverSampler::new();
         let (_x_res, y_res) = ros.fit_resample(&x, &y);
@@ -562,11 +562,10 @@ mod tests {
 
     #[test]
     fn test_smote() {
-        let x = Tensor::from_slice(&[
-            1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0,
+        let x = Tensor::from_slice(&[1.0f32, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0,
             10.0, 10.0, 11.0, 11.0
         ], &[6, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 0.0, 1.0, 1.0], &[6]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 0.0, 1.0, 1.0], &[6]).unwrap();
         
         let smote = SMOTE::new().k_neighbors(1);
         let (_x_res, y_res) = smote.fit_resample(&x, &y);
@@ -574,3 +573,5 @@ mod tests {
         assert!(y_res.dims()[0] >= 6);
     }
 }
+
+

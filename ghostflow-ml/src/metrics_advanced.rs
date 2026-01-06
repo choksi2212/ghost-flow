@@ -525,25 +525,27 @@ mod tests {
 
     #[test]
     fn test_log_loss() {
-        let y_true = Tensor::from_slice(&[1.0, 0.0, 1.0, 1.0], &[4]).unwrap();
-        let y_pred = Tensor::from_slice(&[0.9, 0.1, 0.8, 0.7], &[4]).unwrap();
+        let y_true = Tensor::from_slice(&[1.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y_pred = Tensor::from_slice(&[0.9f32, 0.1, 0.8, 0.7], &[4]).unwrap();
         let loss = log_loss(&y_true, &y_pred);
         assert!(loss > 0.0 && loss < 1.0);
     }
 
     #[test]
     fn test_cohen_kappa() {
-        let y_true = Tensor::from_slice(&[0.0, 1.0, 2.0, 0.0, 1.0, 2.0], &[6]).unwrap();
-        let y_pred = Tensor::from_slice(&[0.0, 1.0, 2.0, 0.0, 1.0, 2.0], &[6]).unwrap();
+        let y_true = Tensor::from_slice(&[0.0f32, 1.0, 2.0, 0.0, 1.0, 2.0], &[6]).unwrap();
+        let y_pred = Tensor::from_slice(&[0.0f32, 1.0, 2.0, 0.0, 1.0, 2.0], &[6]).unwrap();
         let kappa = cohen_kappa_score(&y_true, &y_pred);
         assert!((kappa - 1.0).abs() < 1e-5);
     }
 
     #[test]
     fn test_matthews_corrcoef() {
-        let y_true = Tensor::from_slice(&[1.0, 1.0, 0.0, 0.0], &[4]).unwrap();
-        let y_pred = Tensor::from_slice(&[1.0, 1.0, 0.0, 0.0], &[4]).unwrap();
+        let y_true = Tensor::from_slice(&[1.0f32, 1.0, 0.0, 0.0], &[4]).unwrap();
+        let y_pred = Tensor::from_slice(&[1.0f32, 1.0, 0.0, 0.0], &[4]).unwrap();
         let mcc = matthews_corrcoef(&y_true, &y_pred);
         assert!((mcc - 1.0).abs() < 1e-5);
     }
 }
+
+

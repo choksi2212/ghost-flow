@@ -398,13 +398,12 @@ mod tests {
 
     #[test]
     fn test_rbf_network_regression() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             1.0, 0.0,
             0.0, 1.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
 
         let mut rbf = RBFNetwork::new(4).gamma(1.0);
         rbf.fit(&x, &y);
@@ -415,13 +414,12 @@ mod tests {
 
     #[test]
     fn test_rbf_classifier() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             1.0, 0.0,
             0.0, 1.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 1.0, 1.0, 0.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 1.0, 1.0, 0.0], &[4]).unwrap();
 
         let mut clf = RBFClassifier::new(4).gamma(1.0);
         clf.fit(&x, &y);
@@ -430,3 +428,5 @@ mod tests {
         assert_eq!(pred.dims(), &[4]);
     }
 }
+
+

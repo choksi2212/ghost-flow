@@ -17,6 +17,9 @@ pub mod pooling;
 pub mod rnn;
 pub mod quantization;
 pub mod distributed;
+pub mod serialization;
+pub mod onnx;
+pub mod inference;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -41,6 +44,17 @@ pub use quantization::{
 pub use distributed::{
     DistributedConfig, DistributedBackend, DataParallel, ModelParallel,
     GradientAccumulator, DistributedDataParallel, PipelineParallel,
+};
+pub use serialization::{
+    ModelCheckpoint, ModelMetadata, save_model, load_model,
+};
+pub use onnx::{
+    ONNXModel, ONNXNode, ONNXTensor, ONNXDataType, ONNXAttribute,
+    tensor_to_onnx, onnx_to_tensor,
+};
+pub use inference::{
+    InferenceConfig, InferenceOptimizer, InferenceSession,
+    BatchInference, warmup_model,
 };
 
 /// Prelude for convenient imports

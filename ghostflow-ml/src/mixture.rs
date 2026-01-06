@@ -532,20 +532,18 @@ mod tests {
 
     #[test]
     fn test_gaussian_mixture() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0, 0.1, 0.1, 0.2, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0, 0.1, 0.1, 0.2, 0.0,
             5.0, 5.0, 5.1, 5.1, 5.2, 5.0,
-        ], &[4, 2]).unwrap();
+        ], &[6, 2]).unwrap();
         
         let mut gmm = GaussianMixture::new(2);
         let labels = gmm.fit_predict(&x);
-        assert_eq!(labels.dims(), &[4]);
+        assert_eq!(labels.dims()[0], 6); // Number of samples
     }
 
     #[test]
     fn test_bayesian_gmm() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0, 0.1, 0.1,
+        let x = Tensor::from_slice(&[0.0f32, 0.0, 0.1, 0.1,
             5.0, 5.0, 5.1, 5.1,
         ], &[4, 2]).unwrap();
         
@@ -554,3 +552,5 @@ mod tests {
         assert_eq!(labels.dims(), &[4]);
     }
 }
+
+

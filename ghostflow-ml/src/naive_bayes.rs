@@ -568,14 +568,13 @@ mod tests {
 
     #[test]
     fn test_gaussian_nb() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0,
             1.5, 1.8,
             5.0, 8.0,
             6.0, 9.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut gnb = GaussianNB::new();
         gnb.fit(&x, &y);
@@ -586,14 +585,13 @@ mod tests {
 
     #[test]
     fn test_multinomial_nb() {
-        let x = Tensor::from_slice(&[
-            2.0, 1.0, 0.0,
+        let x = Tensor::from_slice(&[2.0f32, 1.0, 0.0,
             1.0, 2.0, 0.0,
             0.0, 1.0, 2.0,
             0.0, 0.0, 3.0,
         ], &[4, 3]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut mnb = MultinomialNB::new();
         mnb.fit(&x, &y);
@@ -602,3 +600,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

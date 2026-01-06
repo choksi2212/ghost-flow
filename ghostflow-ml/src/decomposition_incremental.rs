@@ -474,8 +474,7 @@ mod tests {
 
     #[test]
     fn test_incremental_pca() {
-        let x = Tensor::from_slice(&[
-            1.0, 2.0, 3.0,
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0,
             4.0, 5.0, 6.0,
             7.0, 8.0, 9.0,
             10.0, 11.0, 12.0,
@@ -490,8 +489,8 @@ mod tests {
     fn test_incremental_pca_partial_fit() {
         let mut ipca = IncrementalPCA::new(2);
         
-        let batch1 = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[2, 3]).unwrap();
-        let batch2 = Tensor::from_slice(&[7.0, 8.0, 9.0, 10.0, 11.0, 12.0], &[2, 3]).unwrap();
+        let batch1 = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[2, 3]).unwrap();
+        let batch2 = Tensor::from_slice(&[7.0f32, 8.0, 9.0, 10.0, 11.0, 12.0], &[2, 3]).unwrap();
         
         ipca.partial_fit(&batch1);
         ipca.partial_fit(&batch2);
@@ -499,3 +498,5 @@ mod tests {
         assert_eq!(ipca.n_samples_seen(), 4);
     }
 }
+
+

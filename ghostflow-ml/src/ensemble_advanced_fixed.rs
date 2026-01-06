@@ -735,14 +735,13 @@ mod tests {
 
     #[test]
     fn test_adaboost() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0], &[4]).unwrap();
         
         let mut ada = AdaBoostClassifier::new(10);
         ada.fit(&x, &y);
@@ -753,14 +752,13 @@ mod tests {
 
     #[test]
     fn test_bagging() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
         
-        let y = Tensor::from_slice(&[0.0, 0.0, 1.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 1.0, 1.0], &[4]).unwrap();
         
         let mut bag = BaggingClassifier::new(10);
         bag.fit(&x, &y);
@@ -771,8 +769,7 @@ mod tests {
 
     #[test]
     fn test_isolation_forest() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             0.2, 0.0,
             10.0, 10.0,  // Outlier
@@ -785,3 +782,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

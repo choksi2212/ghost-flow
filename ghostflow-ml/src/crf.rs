@@ -429,3 +429,5 @@ mod tests {
         assert_eq!(marginals.dims(), &[3, 3]);
     }
 }
+
+

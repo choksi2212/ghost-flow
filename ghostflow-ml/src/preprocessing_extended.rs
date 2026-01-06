@@ -552,7 +552,7 @@ mod tests {
 
     #[test]
     fn test_robust_scaler() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 100.0, 6.0], &[3, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 100.0, 6.0], &[3, 2]).unwrap();
         let mut scaler = RobustScaler::new();
         let result = scaler.fit_transform(&x);
         assert_eq!(result.dims(), &[3, 2]);
@@ -560,17 +560,17 @@ mod tests {
 
     #[test]
     fn test_max_abs_scaler() {
-        let x = Tensor::from_slice(&[-1.0, 2.0, -3.0, 4.0], &[2, 2]).unwrap();
+        let x = Tensor::from_slice(&[-1.0f32, 2.0, -3.0, 4.0], &[2, 2]).unwrap();
         let mut scaler = MaxAbsScaler::new();
         let result = scaler.fit_transform(&x);
         
-        let data = result.data_f32();
+        let data = result.storage().as_slice::<f32>().to_vec();
         assert!(data.iter().all(|&v| v.abs() <= 1.0));
     }
 
     #[test]
     fn test_kbins_discretizer() {
-        let x = Tensor::from_slice(&[0.0, 0.5, 1.0, 1.5, 2.0, 2.5], &[3, 2]).unwrap();
+        let x = Tensor::from_slice(&[0.0f32, 0.5, 1.0, 1.5, 2.0, 2.5], &[3, 2]).unwrap();
         let mut disc = KBinsDiscretizer::new(3);
         let result = disc.fit_transform(&x);
         assert_eq!(result.dims(), &[3, 2]);
@@ -578,11 +578,13 @@ mod tests {
 
     #[test]
     fn test_binarizer() {
-        let x = Tensor::from_slice(&[0.0, 0.5, 1.0, 1.5], &[2, 2]).unwrap();
+        let x = Tensor::from_slice(&[0.0f32, 0.5, 1.0, 1.5], &[2, 2]).unwrap();
         let binarizer = Binarizer::new(0.5);
         let result = binarizer.transform(&x);
         
-        let data = result.data_f32();
+        let data = result.storage().as_slice::<f32>().to_vec();
         assert_eq!(data, &[0.0, 0.0, 1.0, 1.0]);
     }
 }
+
+

@@ -827,8 +827,7 @@ mod tests {
 
     #[test]
     fn test_spectral_clustering() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             5.0, 5.0,
             5.1, 5.1,
@@ -842,8 +841,7 @@ mod tests {
 
     #[test]
     fn test_mean_shift() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             5.0, 5.0,
             5.1, 5.1,
@@ -857,8 +855,7 @@ mod tests {
 
     #[test]
     fn test_minibatch_kmeans() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.1, 0.1,
             5.0, 5.0,
             5.1, 5.1,
@@ -870,3 +867,5 @@ mod tests {
         assert_eq!(labels.dims(), &[4]);
     }
 }
+
+

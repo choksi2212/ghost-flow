@@ -654,8 +654,8 @@ mod tests {
 
     #[test]
     fn test_huber() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
         let mut model = HuberRegressor::new();
         model.fit(&x, &y);
         let pred = model.predict(&x);
@@ -664,11 +664,13 @@ mod tests {
 
     #[test]
     fn test_ransac() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
-        let y = Tensor::from_slice(&[1.0, 2.0, 3.0], &[3]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let y = Tensor::from_slice(&[1.0f32, 2.0, 3.0], &[3]).unwrap();
         let mut model = RANSACRegressor::new();
         model.fit(&x, &y);
         let pred = model.predict(&x);
         assert_eq!(pred.dims(), &[3]);
     }
 }
+
+

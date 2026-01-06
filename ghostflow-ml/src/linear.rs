@@ -1162,8 +1162,8 @@ mod tests {
 
     #[test]
     fn test_linear_regression() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
-        let y = Tensor::from_slice(&[2.0, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
+        let y = Tensor::from_slice(&[2.0f32, 4.0, 6.0, 8.0, 10.0], &[5]).unwrap();
 
         let mut lr = LinearRegression::new();
         lr.fit(&x, &y);
@@ -1176,8 +1176,8 @@ mod tests {
 
     #[test]
     fn test_ridge() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
-        let y = Tensor::from_slice(&[2.1, 3.9, 6.2, 7.8, 10.1], &[5]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0], &[5, 1]).unwrap();
+        let y = Tensor::from_slice(&[2.1f32, 3.9, 6.2, 7.8, 10.1], &[5]).unwrap();
 
         let mut ridge = Ridge::new(1.0);
         ridge.fit(&x, &y);
@@ -1188,13 +1188,12 @@ mod tests {
 
     #[test]
     fn test_logistic_regression() {
-        let x = Tensor::from_slice(&[
-            0.0, 0.0,
+        let x = Tensor::from_slice(&[0.0f32, 0.0,
             0.0, 1.0,
             1.0, 0.0,
             1.0, 1.0,
         ], &[4, 2]).unwrap();
-        let y = Tensor::from_slice(&[0.0, 0.0, 0.0, 1.0], &[4]).unwrap();
+        let y = Tensor::from_slice(&[0.0f32, 0.0, 0.0, 1.0], &[4]).unwrap();
 
         let mut lr = LogisticRegression::new().max_iter(1000);
         lr.fit(&x, &y);
@@ -1203,3 +1202,5 @@ mod tests {
         assert_eq!(predictions.dims(), &[4]);
     }
 }
+
+

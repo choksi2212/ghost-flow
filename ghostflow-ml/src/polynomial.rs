@@ -681,7 +681,7 @@ mod tests {
 
     #[test]
     fn test_polynomial_features() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0], &[2, 2]).unwrap();
         let mut poly = PolynomialFeatures::new(2);
         let result = poly.fit_transform(&x);
         assert!(result.dims()[1] > 2);
@@ -689,7 +689,7 @@ mod tests {
 
     #[test]
     fn test_power_transformer() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
         let mut pt = PowerTransformer::new(PowerMethod::YeoJohnson);
         let result = pt.fit_transform(&x);
         assert_eq!(result.dims(), &[3, 2]);
@@ -697,9 +697,11 @@ mod tests {
 
     #[test]
     fn test_quantile_transformer() {
-        let x = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
+        let x = Tensor::from_slice(&[1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0], &[3, 2]).unwrap();
         let mut qt = QuantileTransformer::new();
         let result = qt.fit_transform(&x);
         assert_eq!(result.dims(), &[3, 2]);
     }
 }
+
+
