@@ -198,6 +198,11 @@ impl Tensor {
         self.grad.as_ref().map(|g| g.read().clone())
     }
 
+    /// Get reference to underlying storage
+    pub fn storage(&self) -> &Storage {
+        &self.storage
+    }
+
     /// Set gradient
     pub fn set_grad(&mut self, grad: Tensor) {
         self.grad = Some(Arc::new(RwLock::new(grad)));

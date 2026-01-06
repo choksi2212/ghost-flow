@@ -15,6 +15,8 @@ pub mod transformer;
 pub mod embedding;
 pub mod pooling;
 pub mod rnn;
+pub mod quantization;
+pub mod distributed;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -32,6 +34,14 @@ pub use transformer::{
 pub use embedding::Embedding;
 pub use pooling::*;
 pub use rnn::{LSTM, LSTMCell, GRU, GRUCell};
+pub use quantization::{
+    QuantizedTensor, QuantizationConfig, QuantizationScheme,
+    QuantizationAwareTraining, DynamicQuantization,
+};
+pub use distributed::{
+    DistributedConfig, DistributedBackend, DataParallel, ModelParallel,
+    GradientAccumulator, DistributedDataParallel, PipelineParallel,
+};
 
 /// Prelude for convenient imports
 pub mod prelude {

@@ -347,6 +347,341 @@ impl GridSearch {
     }
 }
 
+/// Hyperband
+/// 
+/// Adaptive resource allocation and early-stopping algorithm.
+/// Efficiently allocates resources to promising configurations.
+pub struct Hyperband {
+    pub max_iter: usize,
+    pub eta: usize,
+    parameter_space: HashMap<String, ParameterSpace>,
+}
+
+impl Hyperband {
+    pub fn new(parameter_space: HashMap<String, ParameterSpace>) -> Self {
+        Self {
+            max_iter: 81,  // Maximum iterations per configuration
+            eta: 3,        // Downsampling rate
+            parameter_space,
+        }
+    }
+
+    pub fn max_iter(mut self, max_iter: usize) -> Self {
+        self.max_iter = max_iter;
+        self
+    }
+
+    pub fn eta(mut self, eta: usize) -> Self {
+        self.eta = eta;
+        self
+    }
+
+    /// Optimize with early stopping
+    /// 
+    /// The objective function receives (config, budget) and returns score
+    pub fn optimize<F>(&self, objective: F) -> (Configuration, f32)
+    where
+        F: Fn(&Configuration, usize) -> f32,
+    {
+        let mut rng = thread_rng();
+        let s_max = (self.max_iter as f32).log(self.eta as f32).floor() as usize;
+        let b = (s_max + 1) * self.max_iter;
+
+        let mut best_config = None;
+        let mut best_score = f32::NEG_INFINITY;
+
+        // Successive halving with different resource allocations
+        for s in (0..=s_max).rev() {
+            let n = ((b as f32 / self.max_iter as f32 / (s + 1) as f32) * (self.eta as f32).powi(s as i32)).ceil() as usize;
+            let r = self.max_iter * (self.eta as f32).powi(-(s as i32)) as usize;
+
+            // Generate n random configurations
+            let mut configs: Vec<(Configuration, f32)> = (0..n)
+                .map(|_| {
+                    let config = self.sample_random(&mut rng);
+                    let score = objective(&config, r);
+                    (config, score)
+                })
+                .collect();
+
+            // Successive halving
+            for i in 0..=s {
+                let n_i = (n as f32 * (self.eta as f32).powi(-(i as i32))).floor() as usize;
+                let r_i = r * (self.eta as f32).powi(i as i32) as usize;
+
+                // Evaluate all configurations with budget r_i
+                for (config, score) in configs.iter_mut() {
+                    *score = objective(config, r_i);
+                }
+
+                // Sort by score and keep top n_i / eta
+                configs.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+                let keep = (n_i as f32 / self.eta as f32).ceil() as usize;
+                configs.truncate(keep.min(configs.len()));
+            }
+
+            // Update best configuration
+            if let Some((config, score)) = configs.first() {
+                if *score > best_score {
+                    best_score = *score;
+                    best_config = Some(config.clone());
+                }
+            }
+        }
+
+        (best_config.unwrap(), best_score)
+    }
+
+    fn sample_random(&self, rng: &mut ThreadRng) -> Configuration {
+        let mut config = HashMap::new();
+
+        for (name, space) in &self.parameter_space {
+            let value = match space {
+                ParameterSpace::Continuous { min, max, log_scale } => {
+                    let val = if *log_scale {
+                        let log_min = min.ln();
+                        let log_max = max.ln();
+                        (rng.gen::<f32>() * (log_max - log_min) + log_min).exp()
+                    } else {
+                        rng.gen::<f32>() * (max - min) + min
+                    };
+                    ParameterValue::Float(val)
+                }
+                ParameterSpace::Integer { min, max } => {
+                    let val = rng.gen_range(*min..=*max);
+                    ParameterValue::Int(val)
+                }
+                ParameterSpace::Categorical { choices } => {
+                    let idx = rng.gen_range(0..choices.len());
+                    ParameterValue::String(choices[idx].clone())
+                }
+            };
+            config.insert(name.clone(), value);
+        }
+
+        config
+    }
+}
+
+/// BOHB (Bayesian Optimization and HyperBand)
+/// 
+/// Combines Bayesian optimization with Hyperband's adaptive resource allocation.
+/// Uses a tree-structured Parzen estimator (TPE) for configuration selection.
+pub struct BOHB {
+    pub max_iter: usize,
+    pub eta: usize,
+    pub min_points_in_model: usize,
+    pub top_n_percent: usize,
+    pub bandwidth_factor: f32,
+    parameter_space: HashMap<String, ParameterSpace>,
+    observations: Vec<(Configuration, usize, f32)>,  // (config, budget, score)
+}
+
+impl BOHB {
+    pub fn new(parameter_space: HashMap<String, ParameterSpace>) -> Self {
+        Self {
+            max_iter: 81,
+            eta: 3,
+            min_points_in_model: 10,
+            top_n_percent: 15,
+            bandwidth_factor: 3.0,
+            parameter_space,
+            observations: Vec::new(),
+        }
+    }
+
+    pub fn max_iter(mut self, max_iter: usize) -> Self {
+        self.max_iter = max_iter;
+        self
+    }
+
+    pub fn eta(mut self, eta: usize) -> Self {
+        self.eta = eta;
+        self
+    }
+
+    /// Optimize using BOHB
+    pub fn optimize<F>(&mut self, objective: F) -> (Configuration, f32)
+    where
+        F: Fn(&Configuration, usize) -> f32,
+    {
+        let mut rng = thread_rng();
+        let s_max = (self.max_iter as f32).log(self.eta as f32).floor() as usize;
+        let b = (s_max + 1) * self.max_iter;
+
+        let mut best_config = None;
+        let mut best_score = f32::NEG_INFINITY;
+
+        for s in (0..=s_max).rev() {
+            let n = ((b as f32 / self.max_iter as f32 / (s + 1) as f32) * (self.eta as f32).powi(s as i32)).ceil() as usize;
+            let r = self.max_iter * (self.eta as f32).powi(-(s as i32)) as usize;
+
+            // Generate configurations using TPE or random sampling
+            let mut configs: Vec<(Configuration, f32)> = (0..n)
+                .map(|_| {
+                    let config = if self.observations.len() >= self.min_points_in_model {
+                        self.sample_tpe(&mut rng)
+                    } else {
+                        self.sample_random(&mut rng)
+                    };
+                    let score = objective(&config, r);
+                    self.observations.push((config.clone(), r, score));
+                    (config, score)
+                })
+                .collect();
+
+            // Successive halving
+            for i in 0..=s {
+                let n_i = (n as f32 * (self.eta as f32).powi(-(i as i32))).floor() as usize;
+                let r_i = r * (self.eta as f32).powi(i as i32) as usize;
+
+                for (config, score) in configs.iter_mut() {
+                    *score = objective(config, r_i);
+                    self.observations.push((config.clone(), r_i, *score));
+                }
+
+                configs.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+                let keep = (n_i as f32 / self.eta as f32).ceil() as usize;
+                configs.truncate(keep.min(configs.len()));
+            }
+
+            if let Some((config, score)) = configs.first() {
+                if *score > best_score {
+                    best_score = *score;
+                    best_config = Some(config.clone());
+                }
+            }
+        }
+
+        (best_config.unwrap(), best_score)
+    }
+
+    fn sample_tpe(&self, rng: &mut ThreadRng) -> Configuration {
+        // Tree-structured Parzen Estimator sampling
+        // Split observations into good and bad based on top_n_percent
+        let mut sorted_obs = self.observations.clone();
+        sorted_obs.sort_by(|a, b| b.2.partial_cmp(&a.2).unwrap());
+
+        let split_idx = (sorted_obs.len() * self.top_n_percent / 100).max(1);
+        let good_obs: Vec<_> = sorted_obs.iter().take(split_idx).collect();
+        let bad_obs: Vec<_> = sorted_obs.iter().skip(split_idx).collect();
+
+        // Sample from good distribution
+        let mut config = HashMap::new();
+
+        for (name, space) in &self.parameter_space {
+            let value = match space {
+                ParameterSpace::Continuous { min, max, log_scale } => {
+                    // Build KDE from good observations
+                    let good_values: Vec<f32> = good_obs
+                        .iter()
+                        .filter_map(|(c, _, _)| {
+                            if let Some(ParameterValue::Float(v)) = c.get(name) {
+                                Some(*v)
+                            } else {
+                                None
+                            }
+                        })
+                        .collect();
+
+                    let val = if !good_values.is_empty() {
+                        // Sample from KDE
+                        let idx = rng.gen_range(0..good_values.len());
+                        let base = good_values[idx];
+                        let bandwidth = (max - min) / self.bandwidth_factor;
+                        let noise = rng.gen::<f32>() * bandwidth - bandwidth / 2.0;
+                        (base + noise).clamp(*min, *max)
+                    } else {
+                        // Fallback to random
+                        if *log_scale {
+                            let log_min = min.ln();
+                            let log_max = max.ln();
+                            (rng.gen::<f32>() * (log_max - log_min) + log_min).exp()
+                        } else {
+                            rng.gen::<f32>() * (max - min) + min
+                        }
+                    };
+                    ParameterValue::Float(val)
+                }
+                ParameterSpace::Integer { min, max } => {
+                    let good_values: Vec<i32> = good_obs
+                        .iter()
+                        .filter_map(|(c, _, _)| {
+                            if let Some(ParameterValue::Int(v)) = c.get(name) {
+                                Some(*v)
+                            } else {
+                                None
+                            }
+                        })
+                        .collect();
+
+                    let val = if !good_values.is_empty() {
+                        let idx = rng.gen_range(0..good_values.len());
+                        good_values[idx]
+                    } else {
+                        rng.gen_range(*min..=*max)
+                    };
+                    ParameterValue::Int(val)
+                }
+                ParameterSpace::Categorical { choices } => {
+                    let good_values: Vec<String> = good_obs
+                        .iter()
+                        .filter_map(|(c, _, _)| {
+                            if let Some(ParameterValue::String(v)) = c.get(name) {
+                                Some(v.clone())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect();
+
+                    let val = if !good_values.is_empty() {
+                        let idx = rng.gen_range(0..good_values.len());
+                        good_values[idx].clone()
+                    } else {
+                        let idx = rng.gen_range(0..choices.len());
+                        choices[idx].clone()
+                    };
+                    ParameterValue::String(val)
+                }
+            };
+            config.insert(name.clone(), value);
+        }
+
+        config
+    }
+
+    fn sample_random(&self, rng: &mut ThreadRng) -> Configuration {
+        let mut config = HashMap::new();
+
+        for (name, space) in &self.parameter_space {
+            let value = match space {
+                ParameterSpace::Continuous { min, max, log_scale } => {
+                    let val = if *log_scale {
+                        let log_min = min.ln();
+                        let log_max = max.ln();
+                        (rng.gen::<f32>() * (log_max - log_min) + log_min).exp()
+                    } else {
+                        rng.gen::<f32>() * (max - min) + min
+                    };
+                    ParameterValue::Float(val)
+                }
+                ParameterSpace::Integer { min, max } => {
+                    let val = rng.gen_range(*min..=*max);
+                    ParameterValue::Int(val)
+                }
+                ParameterSpace::Categorical { choices } => {
+                    let idx = rng.gen_range(0..choices.len());
+                    ParameterValue::String(choices[idx].clone())
+                }
+            };
+            config.insert(name.clone(), value);
+        }
+
+        config
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -403,4 +738,107 @@ mod tests {
         assert!(best_config.contains_key("param1"));
         assert!(best_config.contains_key("param2"));
     }
+
+    #[test]
+    fn test_hyperband() {
+        let mut param_space = HashMap::new();
+        param_space.insert(
+            "learning_rate".to_string(),
+            ParameterSpace::Continuous { min: 0.001, max: 0.1, log_scale: true },
+        );
+        param_space.insert(
+            "n_layers".to_string(),
+            ParameterSpace::Integer { min: 1, max: 5 },
+        );
+
+        let hb = Hyperband::new(param_space)
+            .max_iter(27)
+            .eta(3);
+
+        let (best_config, best_score) = hb.optimize(|config, budget| {
+            // Simulate training with budget (number of iterations)
+            let lr = match config.get("learning_rate") {
+                Some(ParameterValue::Float(v)) => *v,
+                _ => 0.01,
+            };
+            let n_layers = match config.get("n_layers") {
+                Some(ParameterValue::Int(v)) => *v,
+                _ => 2,
+            };
+
+            // Score improves with budget and depends on hyperparameters
+            let base_score = lr * 10.0 + n_layers as f32;
+            base_score * (budget as f32).sqrt() / 10.0
+        });
+
+        assert!(best_score > 0.0);
+        assert!(best_config.contains_key("learning_rate"));
+        assert!(best_config.contains_key("n_layers"));
+    }
+
+    #[test]
+    fn test_bohb() {
+        let mut param_space = HashMap::new();
+        param_space.insert(
+            "learning_rate".to_string(),
+            ParameterSpace::Continuous { min: 0.001, max: 0.1, log_scale: true },
+        );
+        param_space.insert(
+            "batch_size".to_string(),
+            ParameterSpace::Integer { min: 16, max: 128 },
+        );
+
+        let mut bohb = BOHB::new(param_space)
+            .max_iter(27)
+            .eta(3);
+
+        let (best_config, best_score) = bohb.optimize(|config, budget| {
+            let lr = match config.get("learning_rate") {
+                Some(ParameterValue::Float(v)) => *v,
+                _ => 0.01,
+            };
+            let batch_size = match config.get("batch_size") {
+                Some(ParameterValue::Int(v)) => *v,
+                _ => 32,
+            };
+
+            // Simulate validation score
+            let base_score = (lr * 100.0).ln() + (batch_size as f32 / 32.0);
+            base_score * (budget as f32).sqrt() / 5.0
+        });
+
+        assert!(best_score > 0.0);
+        assert!(best_config.contains_key("learning_rate"));
+        assert!(best_config.contains_key("batch_size"));
+    }
+
+    #[test]
+    fn test_bohb_tpe_sampling() {
+        let mut param_space = HashMap::new();
+        param_space.insert(
+            "x".to_string(),
+            ParameterSpace::Continuous { min: -5.0, max: 5.0, log_scale: false },
+        );
+
+        let mut bohb = BOHB::new(param_space)
+            .max_iter(9)
+            .eta(3);
+
+        // Optimize a simple quadratic function
+        let (best_config, best_score) = bohb.optimize(|config, _budget| {
+            let x = match config.get("x") {
+                Some(ParameterValue::Float(v)) => *v,
+                _ => 0.0,
+            };
+            // Maximize -(x-2)^2, optimum at x=2
+            -(x - 2.0).powi(2)
+        });
+
+        // Should find value close to 2
+        if let Some(ParameterValue::Float(x)) = best_config.get("x") {
+            assert!((x - 2.0).abs() < 1.0, "Expected x close to 2, got {}", x);
+        }
+        assert!(best_score > -2.0);
+    }
 }
+
