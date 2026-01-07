@@ -4,9 +4,11 @@
 
 pub mod tape;
 pub mod backward;
+pub mod dynamic_graph;
 
 pub use tape::GradTape;
 pub use backward::backward;
+pub use dynamic_graph::{DynamicGraph, DynamicContext, DynamicTensor, GraphNode};
 
 /// Enable gradient computation for a tensor
 pub fn enable_grad() {

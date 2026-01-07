@@ -17,6 +17,7 @@ pub mod ops;
 pub mod device;
 pub mod error;
 pub mod serialize;
+pub mod sparse;
 
 // Phase 4: Advanced optimizations
 pub mod fusion;
@@ -35,6 +36,7 @@ pub use tensor::Tensor;
 pub use device::{Device, Cpu};
 pub use error::{GhostError, Result};
 pub use serialize::{StateDict, save_state_dict, load_state_dict, Serializable};
+pub use sparse::{SparseTensorCOO, SparseTensorCSR, SparseTensorCSC};
 
 // Phase 4 exports
 pub use fusion::{FusionEngine, ComputeGraph, FusionPattern};

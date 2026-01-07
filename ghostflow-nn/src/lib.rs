@@ -20,6 +20,9 @@ pub mod distributed;
 pub mod serialization;
 pub mod onnx;
 pub mod inference;
+pub mod gnn;
+pub mod rl;
+pub mod federated;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -47,6 +50,17 @@ pub use distributed::{
 };
 pub use serialization::{
     ModelCheckpoint, ModelMetadata, save_model, load_model,
+};
+pub use gnn::{
+    Graph, GCNLayer, GATLayer, GraphSAGELayer, MPNNLayer, AggregatorType,
+};
+pub use rl::{
+    ReplayBuffer, Experience, DQNAgent, QNetwork,
+    PolicyNetwork, REINFORCEAgent, ActorCriticAgent, ValueNetwork, PPOAgent,
+};
+pub use federated::{
+    FederatedClient, FederatedServer, AggregationStrategy,
+    SecureAggregation, DifferentialPrivacy,
 };
 pub use onnx::{
     ONNXModel, ONNXNode, ONNXTensor, ONNXDataType, ONNXAttribute,
