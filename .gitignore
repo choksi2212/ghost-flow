@@ -60,3 +60,27 @@ test_env/
 # Benchmarks
 /DOCS/ghostflow-benchmarks/results/
 /DOCS/ghostflow-benchmarks/charts/
+
+# Extra documentation files (keep only essential)
+*_COMPLETE.md
+*_SUMMARY.md
+PHASE*.md
+PUBLISHING_v*.md
+RELEASE_CHECKLIST.md
+READY_TO_PUBLISH.md
+PUBLISH_NOW.md
+PUBLISHING_STATUS.md
+FINAL_RELEASE_SUMMARY.md
+SESSION_SUMMARY.md
+COMPLETE_*.md
+V0.2.0_*.md
+V0.3.0_*.md
+V0.5.0_*.md
+QUICK_REFERENCE_*.md
+GHOSTFLOW_ML_TESTS_FIXED.md
+
+# Python test scripts
+fix_tests*.py
+
+# Release assets
+release-assets/
