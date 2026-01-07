@@ -1,6 +1,6 @@
 [package]
 name = "ghostflow-data"
-version = "0.1.0"
+version = "0.5.0"
 edition = "2021"
 description = "Data loading utilities for GhostFlow ML framework"
 license = "MIT OR Apache-2.0"
@@ -12,6 +12,6 @@ categories = ["science", "algorithms"]
 readme = "../README.md"
 
 [dependencies]
-ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
+ghostflow-core = { version = "0.5.0", path = "../ghostflow-core" }
 rand = "0.8"
 rayon = "1.8"

@@ -1,6 +1,6 @@
 [package]
 name = "ghostflow-wasm"
-version = "0.1.0"
+version = "0.5.0"
 edition = "2021"
 description = "WebAssembly bindings for GhostFlow ML framework"
 license = "MIT OR Apache-2.0"
@@ -10,9 +10,9 @@ repository = "https://github.com/choksi2212/ghost-flow"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
-ghostflow-nn = { version = "0.1.0", path = "../ghostflow-nn" }
-ghostflow-ml = { version = "0.1.0", path = "../ghostflow-ml" }
+ghostflow-core = { version = "0.5.0", path = "../ghostflow-core" }
+ghostflow-nn = { version = "0.5.0", path = "../ghostflow-nn" }
+ghostflow-ml = { version = "0.5.0", path = "../ghostflow-ml" }
 wasm-bindgen = "0.2"
 serde = { version = "1.0", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
