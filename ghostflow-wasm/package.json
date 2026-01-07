@@ -1,0 +1,35 @@
+{
+  "name": "@ghostflow/wasm",
+  "version": "0.5.0",
+  "description": "WebAssembly bindings for GhostFlow ML framework - Run ML models in the browser",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "ghostflow_wasm_bg.wasm",
+    "ghostflow_wasm.js",
+    "ghostflow_wasm.d.ts",
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/choksi2212/ghost-flow.git"
+  },
+  "keywords": [
+    "machine-learning",
+    "deep-learning",
+    "neural-network",
+    "wasm",
+    "webassembly",
+    "ml",
+    "ai",
+    "tensor"
+  ],
+  "author": "GhostFlow Team",
+  "license": "MIT OR Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/choksi2212/ghost-flow/issues"
+  },
+  "homepage": "https://github.com/choksi2212/ghost-flow#readme"
+}
