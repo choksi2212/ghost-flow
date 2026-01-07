@@ -18,6 +18,11 @@ pub mod device;
 pub mod error;
 pub mod serialize;
 pub mod sparse;
+pub mod hardware;
+pub mod rocm;
+pub mod metal;
+pub mod neon;
+pub mod tpu;
 
 // Phase 4: Advanced optimizations
 pub mod fusion;
@@ -37,6 +42,7 @@ pub use device::{Device, Cpu};
 pub use error::{GhostError, Result};
 pub use serialize::{StateDict, save_state_dict, load_state_dict, Serializable};
 pub use sparse::{SparseTensorCOO, SparseTensorCSR, SparseTensorCSC};
+pub use hardware::{HardwareBackend, HardwareDevice, HardwareOps, ElementwiseOp, list_devices};
 
 // Phase 4 exports
 pub use fusion::{FusionEngine, ComputeGraph, FusionPattern};

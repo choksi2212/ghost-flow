@@ -35,6 +35,9 @@ pub enum GhostError {
     #[error("CUDA error: {0}")]
     CudaError(String),
 
+    #[error("Device error: {0}")]
+    DeviceError(String),
+
     #[error("Invalid operation: {0}")]
     InvalidOperation(String),
 

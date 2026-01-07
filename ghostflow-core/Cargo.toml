@@ -16,7 +16,12 @@ default = ["rayon", "simd"]
 blas = ["dep:cblas"]
 simd = ["wide", "pulp"]
 cuda = []
+rocm = []
+metal = []
+tpu = []
+neon = []
 all-optimizations = ["simd", "rayon"]
+all-hardware = ["cuda", "rocm", "metal", "tpu", "neon"]
 
 [dependencies]
 rand = "0.8"
