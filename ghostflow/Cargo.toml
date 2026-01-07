@@ -27,15 +27,15 @@ full = ["nn", "ml", "autograd", "optim", "data", "simd"]
 
 [dependencies]
 # Core is always included
-ghostflow-core = { version = "0.5.0", path = "../ghostflow-core" }
+ghostflow-core = { version = "0.1.0", path = "../ghostflow-core" }
 
 # Optional modules (included by default)
-ghostflow-nn = { version = "0.5.0", path = "../ghostflow-nn", optional = true }
-ghostflow-ml = { version = "0.5.0", path = "../ghostflow-ml", optional = true }
-ghostflow-autograd = { version = "0.5.0", path = "../ghostflow-autograd", optional = true }
-ghostflow-optim = { version = "0.5.0", path = "../ghostflow-optim", optional = true }
-ghostflow-data = { version = "0.5.0", path = "../ghostflow-data", optional = true }
-ghostflow-cuda = { version = "0.5.0", path = "../ghostflow-cuda", optional = true }
+ghostflow-nn = { version = "0.1.0", path = "../ghostflow-nn", optional = true }
+ghostflow-ml = { version = "0.1.0", path = "../ghostflow-ml", optional = true }
+ghostflow-autograd = { version = "0.1.0", path = "../ghostflow-autograd", optional = true }
+ghostflow-optim = { version = "0.1.0", path = "../ghostflow-optim", optional = true }
+ghostflow-data = { version = "0.1.0", path = "../ghostflow-data", optional = true }
+ghostflow-cuda = { version = "0.1.0", path = "../ghostflow-cuda", optional = true }
 
 [[example]]
 name = "new_layers_demo"
