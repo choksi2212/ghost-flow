@@ -37,7 +37,7 @@ impl Tensor {
     /// Maximum element
     pub fn max(&self) -> Tensor {
         let data = self.data_f32();
-        let max = data.iter().cloned().reduce(|| f32::NEG_INFINITY, f32::max);
+        let max = data.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
         Tensor::from_slice(&[max], &[]).unwrap()
     }
 
@@ -51,7 +51,7 @@ impl Tensor {
     /// Minimum element
     pub fn min(&self) -> Tensor {
         let data = self.data_f32();
-        let min = data.iter().cloned().reduce(|| f32::INFINITY, f32::min);
+        let min = data.iter().cloned().fold(f32::INFINITY, f32::min);
         Tensor::from_slice(&[min], &[]).unwrap()
     }
 

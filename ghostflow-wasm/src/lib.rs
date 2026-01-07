@@ -46,13 +46,13 @@ impl WasmTensor {
     /// Get the shape of the tensor
     #[wasm_bindgen(js_name = shape)]
     pub fn shape(&self) -> Vec<usize> {
-        self.inner.shape().to_vec()
+        self.inner.dims().to_vec()
     }
 
     /// Get the data as a flat array
     #[wasm_bindgen(js_name = toArray)]
     pub fn to_array(&self) -> Vec<f32> {
-        self.inner.data().to_vec()
+        self.inner.data_f32()
     }
 
     /// Get a string representation

@@ -115,7 +115,7 @@ impl Tensor {
 
     /// Clamp values to range
     pub fn clamp(&self, min: f32, max: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.clamp(min, max)).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.clamp(min, max));
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 }
@@ -141,8 +141,14 @@ where
 
     // Fast path: same shape
     if a_shape == b_shape {
+        #[cfg(feature = "rayon")]
         let result: Vec<f32> = a.par_iter()
             .zip(b.par_iter())
+            .map(|(&x, &y)| op(x, y))
+            .collect();
+        #[cfg(not(feature = "rayon"))]
+        let result: Vec<f32> = a.iter()
+            .zip(b.iter())
             .map(|(&x, &y)| op(x, y))
             .collect();
         return Ok((result, result_dims));
@@ -152,8 +158,17 @@ where
     let a_strides = compute_broadcast_strides(a_shape, &result_dims);
     let b_strides = compute_broadcast_strides(b_shape, &result_dims);
 
+    #[cfg(feature = "rayon")]
     let result: Vec<f32> = (0..numel)
         .into_par_iter()
+        .map(|i| {
+            let a_idx = compute_broadcast_index(i, &result_dims, &a_strides);
+            let b_idx = compute_broadcast_index(i, &result_dims, &b_strides);
+            op(a[a_idx], b[b_idx])
+        })
+        .collect();
+    #[cfg(not(feature = "rayon"))]
+    let result: Vec<f32> = (0..numel)
         .map(|i| {
             let a_idx = compute_broadcast_index(i, &result_dims, &a_strides);
             let b_idx = compute_broadcast_index(i, &result_dims, &b_strides);

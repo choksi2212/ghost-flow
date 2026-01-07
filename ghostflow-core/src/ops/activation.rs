@@ -176,8 +176,13 @@ impl Tensor {
         
         let mut result = vec![0.0f32; data.len()];
         
-        // Parallelize over outer dimension for better performance
-        result.par_chunks_mut(dim_size * inner_size)
+        // Process each outer chunk
+        #[cfg(feature = "rayon")]
+        let chunks_iter = result.par_chunks_mut(dim_size * inner_size);
+        #[cfg(not(feature = "rayon"))]
+        let chunks_iter = result.chunks_mut(dim_size * inner_size);
+        
+        chunks_iter
             .enumerate()
             .for_each(|(outer, outer_chunk)| {
                 for inner in 0..inner_size {

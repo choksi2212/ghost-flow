@@ -7,6 +7,7 @@
 
 use crate::tensor::Tensor;
 use crate::error::Result;
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
 
 /// Optimized 2D convolution
@@ -77,7 +78,7 @@ fn conv2d_im2col(
     let mut col_data = vec![0.0f32; batch * col_size * output_size];
     
     // Parallel im2col transformation
-    col_data.par_chunks_mut(col_size * output_size)
+    col_data.chunks_mut(col_size * output_size)
         .enumerate()
         .for_each(|(b, batch_col)| {
             for c in 0..in_channels {
@@ -152,7 +153,7 @@ fn conv2d_im2col(
     // Fallback without BLAS
     #[cfg(not(feature = "blas"))]
     {
-        output_data.par_chunks_mut(out_channels * output_size)
+        output_data.chunks_mut(out_channels * output_size)
             .enumerate()
             .for_each(|(b, batch_out)| {
                 let col_offset = b * col_size * output_size;
@@ -173,7 +174,7 @@ fn conv2d_im2col(
     // Step 4: Add bias if present
     if let Some(bias_tensor) = bias {
         let bias_data = bias_tensor.data_f32();
-        output_data.par_chunks_mut(out_channels * output_size)
+        output_data.chunks_mut(out_channels * output_size)
             .for_each(|batch_out| {
                 for oc in 0..out_channels {
                     for out_idx in 0..output_size {
@@ -259,7 +260,7 @@ fn conv2d_direct(
     let mut output = vec![0.0f32; batch * out_channels * out_h * out_w];
     
     // Parallel over batch and output channels
-    output.par_chunks_mut(out_h * out_w)
+    output.chunks_mut(out_h * out_w)
         .enumerate()
         .for_each(|(idx, out_slice)| {
             let b = idx / out_channels;
@@ -302,7 +303,7 @@ fn conv2d_direct(
     // Add bias
     if let Some(bias_tensor) = bias {
         let bias_data = bias_tensor.data_f32();
-        output.par_chunks_mut(out_h * out_w)
+        output.chunks_mut(out_h * out_w)
             .enumerate()
             .for_each(|(idx, out_slice)| {
                 let oc = idx % out_channels;
@@ -338,3 +339,4 @@ mod tests {
         assert_eq!(output.dims(), &[2, 16, 16, 16]);
     }
 }
+

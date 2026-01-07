@@ -98,7 +98,7 @@ impl Tensor {
         const BLOCK_SIZE: usize = 64;
         
         // Parallel over output rows
-        c.par_chunks_mut(n).enumerate().for_each(|(i, row)| {
+        c.chunks_mut(n).enumerate().for_each(|(i, row)| {
             for jb in (0..n).step_by(BLOCK_SIZE) {
                 let j_end = (jb + BLOCK_SIZE).min(n);
                 
@@ -144,7 +144,7 @@ impl Tensor {
         
         let mut result = vec![0.0f32; batch_size * m * n];
         
-        result.par_chunks_mut(c_batch_stride).enumerate().for_each(|(batch_idx, c_batch)| {
+        result.chunks_mut(c_batch_stride).enumerate().for_each(|(batch_idx, c_batch)| {
             let a_idx = batch_idx % (a_batch.iter().product::<usize>().max(1));
             let b_idx = batch_idx % (b_batch.iter().product::<usize>().max(1));
             
@@ -377,3 +377,4 @@ mod tests {
         assert_eq!(trace.data_f32()[0], 5.0); // 1 + 4
     }
 }
+

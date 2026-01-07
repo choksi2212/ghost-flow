@@ -1,6 +1,7 @@
 //! SIMD-optimized operations for maximum performance
 //!
 //! Uses portable SIMD when available, falls back to scalar operations
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
 
 /// SIMD-optimized ReLU (2-4x faster than scalar)
