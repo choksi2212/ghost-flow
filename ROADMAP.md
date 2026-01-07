@@ -159,10 +159,10 @@ This document outlines what's currently implemented and what's planned for futur
 - [x] Dynamic computation graphs - ✅ PyTorch-style dynamic graphs
 
 ### Hardware Support
-- [ ] ROCm (AMD GPU) support
-- [ ] Metal (Apple Silicon) support
-- [ ] TPU support (if feasible)
-- [ ] ARM NEON optimizations
+- [x] ROCm (AMD GPU) support - ✅ Implemented with HIP kernels
+- [x] Metal (Apple Silicon) support - ✅ Implemented with MPS integration
+- [x] TPU support (if feasible) - ✅ Implemented with XLA compiler support
+- [x] ARM NEON optimizations - ✅ Implemented for AArch64
 
 ### Research Features
 - [ ] Neural architecture search
