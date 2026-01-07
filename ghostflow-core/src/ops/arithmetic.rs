@@ -2,7 +2,18 @@
 
 use crate::tensor::Tensor;
 use crate::error::Result;
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
+
+// Macro to conditionally use parallel or sequential iteration
+macro_rules! map_elements {
+    ($data:expr, $op:expr) => {{
+        #[cfg(feature = "rayon")]
+        { $data.par_iter().map($op).collect() }
+        #[cfg(not(feature = "rayon"))]
+        { $data.iter().map($op).collect() }
+    }};
+}
 
 impl Tensor {
     /// Element-wise addition
@@ -44,61 +55,61 @@ impl Tensor {
 
     /// Add scalar
     pub fn add_scalar(&self, scalar: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x + scalar).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x + scalar);
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Subtract scalar
     pub fn sub_scalar(&self, scalar: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x - scalar).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x - scalar);
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Multiply by scalar
     pub fn mul_scalar(&self, scalar: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x * scalar).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x * scalar);
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Divide by scalar
     pub fn div_scalar(&self, scalar: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x / scalar).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x / scalar);
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Negation
     pub fn neg(&self) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| -x).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| -x);
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Absolute value
     pub fn abs(&self) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.abs()).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.abs());
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Power
     pub fn pow(&self, exp: f32) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.powf(exp)).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.powf(exp));
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Square root
     pub fn sqrt(&self) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.sqrt()).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.sqrt());
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Exponential
     pub fn exp(&self) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.exp()).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.exp());
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 
     /// Natural logarithm
     pub fn log(&self) -> Tensor {
-        let data: Vec<f32> = self.data_f32().par_iter().map(|&x| x.ln()).collect();
+        let data: Vec<f32> = map_elements!(self.data_f32(), |&x| x.ln());
         Tensor::from_slice(&data, self.dims()).unwrap()
     }
 

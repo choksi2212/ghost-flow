@@ -78,14 +78,14 @@ fn relu_sse2(data: &[f32]) -> Vec<f32> {
 #[allow(dead_code)]
 #[inline]
 fn relu_scalar(data: &[f32]) -> Vec<f32> {
-    data.par_iter().map(|&x| x.max(0.0)).collect()
+    data.iter().map(|&x| x.max(0.0)).collect()
 }
 
 /// SIMD-optimized sigmoid
 #[inline]
 pub fn sigmoid_simd(data: &[f32]) -> Vec<f32> {
     // Sigmoid is exp-heavy, so we use fast approximation
-    data.par_iter()
+    data.iter()
         .map(|&x| {
             // Fast sigmoid approximation: 1 / (1 + exp(-x))
             // Use fast exp approximation for better performance
@@ -122,7 +122,7 @@ pub fn gelu_simd(data: &[f32]) -> Vec<f32> {
     const SQRT_2_OVER_PI: f32 = 0.797_884_6;
     const COEFF: f32 = 0.044715;
     
-    data.par_iter()
+    data.iter()
         .map(|&x| {
             let inner = SQRT_2_OVER_PI * (x + COEFF * x.powi(3));
             0.5 * x * (1.0 + fast_tanh(inner))
@@ -217,7 +217,7 @@ fn add_sse2(a: &[f32], b: &[f32]) -> Vec<f32> {
 #[allow(dead_code)]
 #[inline]
 fn add_scalar(a: &[f32], b: &[f32]) -> Vec<f32> {
-    a.par_iter().zip(b.par_iter()).map(|(&x, &y)| x + y).collect()
+    a.iter().zip(b.iter()).map(|(&x, &y)| x + y).collect()
 }
 
 #[cfg(test)]

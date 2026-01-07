@@ -1,6 +1,7 @@
 //! Activation functions
 
 use crate::tensor::Tensor;
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
 
 impl Tensor {
@@ -17,7 +18,7 @@ impl Tensor {
         #[cfg(not(feature = "simd"))]
         {
             let data: Vec<f32> = self.data_f32()
-                .par_iter()
+                .iter()
                 .map(|&x| x.max(0.0))
                 .collect();
             Tensor::from_slice(&data, self.dims()).unwrap()
@@ -27,7 +28,7 @@ impl Tensor {
     /// Leaky ReLU: max(alpha * x, x)
     pub fn leaky_relu(&self, alpha: f32) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| if x > 0.0 { x } else { alpha * x })
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -36,7 +37,7 @@ impl Tensor {
     /// ELU activation
     pub fn elu(&self, alpha: f32) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| if x > 0.0 { x } else { alpha * (x.exp() - 1.0) })
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -48,7 +49,7 @@ impl Tensor {
         const SCALE: f32 = 1.050_701;
         
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| {
                 SCALE * if x > 0.0 { x } else { ALPHA * (x.exp() - 1.0) }
             })
@@ -69,7 +70,7 @@ impl Tensor {
         #[cfg(not(feature = "simd"))]
         {
             let data: Vec<f32> = self.data_f32()
-                .par_iter()
+                .iter()
                 .map(|&x| 1.0 / (1.0 + (-x).exp()))
                 .collect();
             Tensor::from_slice(&data, self.dims()).unwrap()
@@ -79,7 +80,7 @@ impl Tensor {
     /// Tanh activation
     pub fn tanh(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| x.tanh())
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -101,7 +102,7 @@ impl Tensor {
             const COEFF: f32 = 0.044715;
             
             let data: Vec<f32> = self.data_f32()
-                .par_iter()
+                .iter()
                 .map(|&x| {
                     // Approximation: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
                     let inner = SQRT_2_OVER_PI * (x + COEFF * x.powi(3));
@@ -115,7 +116,7 @@ impl Tensor {
     /// SiLU / Swish activation: x * sigmoid(x)
     pub fn silu(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| x / (1.0 + (-x).exp()))
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -124,7 +125,7 @@ impl Tensor {
     /// Mish activation: x * tanh(softplus(x))
     pub fn mish(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| {
                 let softplus = (1.0 + x.exp()).ln();
                 x * softplus.tanh()
@@ -136,7 +137,7 @@ impl Tensor {
     /// Softplus: log(1 + exp(x))
     pub fn softplus(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| {
                 // Numerically stable version
                 if x > 20.0 {
@@ -154,7 +155,7 @@ impl Tensor {
     /// Softsign: x / (1 + |x|)
     pub fn softsign(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| x / (1.0 + x.abs()))
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -223,7 +224,7 @@ impl Tensor {
     /// Hard sigmoid: clamp((x + 3) / 6, 0, 1)
     pub fn hardsigmoid(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| ((x + 3.0) / 6.0).clamp(0.0, 1.0))
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()
@@ -232,7 +233,7 @@ impl Tensor {
     /// Hard swish: x * hardsigmoid(x)
     pub fn hardswish(&self) -> Tensor {
         let data: Vec<f32> = self.data_f32()
-            .par_iter()
+            .iter()
             .map(|&x| x * ((x + 3.0) / 6.0).clamp(0.0, 1.0))
             .collect();
         Tensor::from_slice(&data, self.dims()).unwrap()

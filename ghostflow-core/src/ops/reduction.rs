@@ -2,13 +2,14 @@
 
 use crate::tensor::Tensor;
 use crate::error::{GhostError, Result};
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
 
 impl Tensor {
     /// Sum all elements
     pub fn sum(&self) -> Tensor {
         let data = self.data_f32();
-        let sum: f32 = data.par_iter().sum();
+        let sum: f32 = data.iter().sum();
         Tensor::from_slice(&[sum], &[]).unwrap()
     }
 
@@ -20,7 +21,7 @@ impl Tensor {
     /// Mean of all elements
     pub fn mean(&self) -> Tensor {
         let data = self.data_f32();
-        let sum: f32 = data.par_iter().sum();
+        let sum: f32 = data.iter().sum();
         let mean = sum / data.len() as f32;
         Tensor::from_slice(&[mean], &[]).unwrap()
     }
@@ -36,7 +37,7 @@ impl Tensor {
     /// Maximum element
     pub fn max(&self) -> Tensor {
         let data = self.data_f32();
-        let max = data.par_iter().cloned().reduce(|| f32::NEG_INFINITY, f32::max);
+        let max = data.iter().cloned().reduce(|| f32::NEG_INFINITY, f32::max);
         Tensor::from_slice(&[max], &[]).unwrap()
     }
 
@@ -50,7 +51,7 @@ impl Tensor {
     /// Minimum element
     pub fn min(&self) -> Tensor {
         let data = self.data_f32();
-        let min = data.par_iter().cloned().reduce(|| f32::INFINITY, f32::min);
+        let min = data.iter().cloned().reduce(|| f32::INFINITY, f32::min);
         Tensor::from_slice(&[min], &[]).unwrap()
     }
 
@@ -64,7 +65,7 @@ impl Tensor {
     /// Product of all elements
     pub fn prod(&self) -> Tensor {
         let data = self.data_f32();
-        let prod: f32 = data.par_iter().product();
+        let prod: f32 = data.iter().product();
         Tensor::from_slice(&[prod], &[]).unwrap()
     }
 
@@ -72,8 +73,8 @@ impl Tensor {
     pub fn var(&self, unbiased: bool) -> Tensor {
         let data = self.data_f32();
         let n = data.len() as f32;
-        let mean: f32 = data.par_iter().sum::<f32>() / n;
-        let var: f32 = data.par_iter().map(|&x| (x - mean).powi(2)).sum::<f32>();
+        let mean: f32 = data.iter().sum::<f32>() / n;
+        let var: f32 = data.iter().map(|&x| (x - mean).powi(2)).sum::<f32>();
         let divisor = if unbiased { n - 1.0 } else { n };
         Tensor::from_slice(&[var / divisor], &[]).unwrap()
     }
@@ -150,7 +151,7 @@ impl Tensor {
         let _outer_size: usize = dims[..dim].iter().product();
 
         let result: Vec<f32> = (0..out_numel)
-            .into_par_iter()
+            .into_iter()
             .map(|out_idx| {
                 let outer = out_idx / stride;
                 let inner = out_idx % stride;
@@ -181,14 +182,14 @@ impl Tensor {
     /// L2 norm
     pub fn norm(&self) -> Tensor {
         let data = self.data_f32();
-        let sum_sq: f32 = data.par_iter().map(|&x| x * x).sum();
+        let sum_sq: f32 = data.iter().map(|&x| x * x).sum();
         Tensor::from_slice(&[sum_sq.sqrt()], &[]).unwrap()
     }
 
     /// L1 norm
     pub fn norm_l1(&self) -> Tensor {
         let data = self.data_f32();
-        let sum: f32 = data.par_iter().map(|&x| x.abs()).sum();
+        let sum: f32 = data.iter().map(|&x| x.abs()).sum();
         Tensor::from_slice(&[sum], &[]).unwrap()
     }
 }

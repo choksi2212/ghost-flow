@@ -2,6 +2,7 @@
 
 use crate::tensor::Tensor;
 use crate::error::{GhostError, Result};
+#[cfg(feature = "rayon")]
 use rayon::prelude::*;
 
 impl Tensor {
@@ -186,8 +187,8 @@ impl Tensor {
         let a = self.data_f32();
         let b = other.data_f32();
         
-        let dot: f32 = a.par_iter()
-            .zip(b.par_iter())
+        let dot: f32 = a.iter()
+            .zip(b.iter())
             .map(|(&x, &y)| x * y)
             .sum();
         
@@ -208,7 +209,7 @@ impl Tensor {
         let n = b.len();
         
         let result: Vec<f32> = (0..m)
-            .into_par_iter()
+            .into_iter()
             .flat_map(|i| {
                 b.iter().map(|&bj| a[i] * bj).collect::<Vec<_>>()
             })
@@ -239,7 +240,7 @@ impl Tensor {
         let v = vec.data_f32();
         
         let result: Vec<f32> = (0..m)
-            .into_par_iter()
+            .into_iter()
             .map(|i| {
                 (0..n).map(|j| mat[i * n + j] * v[j]).sum()
             })
