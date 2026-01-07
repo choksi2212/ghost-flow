@@ -151,12 +151,12 @@ This document outlines what's currently implemented and what's planned for futur
 ## 🎯 Long-term Vision (2027+)
 
 ### Advanced Features
-- [ ] Distributed training (multi-node)
-- [ ] Federated learning
-- [ ] Reinforcement learning
-- [ ] Graph neural networks
-- [ ] Sparse tensors
-- [ ] Dynamic computation graphs
+- [x] Distributed training (multi-node) - ✅ Implemented in v0.5.0
+- [x] Federated learning - ✅ Implemented with FedAvg, FedProx, secure aggregation
+- [x] Reinforcement learning - ✅ DQN, REINFORCE, A2C, PPO implemented
+- [x] Graph neural networks - ✅ GCN, GAT, GraphSAGE, MPNN implemented
+- [x] Sparse tensors - ✅ COO, CSR, CSC formats with operations
+- [x] Dynamic computation graphs - ✅ PyTorch-style dynamic graphs
 
 ### Hardware Support
 - [ ] ROCm (AMD GPU) support
