@@ -29,6 +29,7 @@ pub mod vision_transformer;
 pub mod bert;
 pub mod gpt;
 pub mod t5;
+pub mod diffusion;
 
 pub use module::Module;
 pub use linear::Linear;
