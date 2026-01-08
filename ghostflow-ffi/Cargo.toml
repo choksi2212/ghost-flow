@@ -1,6 +1,6 @@
 [package]
 name = "ghostflow-ffi"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 description = "C FFI bindings for GhostFlow ML framework"
 license = "MIT OR Apache-2.0"
@@ -10,9 +10,9 @@ repository = "https://github.com/choksi2212/ghost-flow"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
-ghostflow-core = { version = "1.0.0", path = "../ghostflow-core" }
-ghostflow-nn = { version = "1.0.0", path = "../ghostflow-nn" }
-ghostflow-ml = { version = "1.0.0", path = "../ghostflow-ml" }
+ghostflow-core = { version = "1.1.0", path = "../ghostflow-core" }
+ghostflow-nn = { version = "1.1.0", path = "../ghostflow-nn" }
+ghostflow-ml = { version = "1.1.0", path = "../ghostflow-ml" }
 libc = "0.2"
 
 [build-dependencies]
