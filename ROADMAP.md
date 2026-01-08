@@ -273,7 +273,12 @@ Have suggestions for the roadmap?
   - ✅ **BERT**: Base, Large, Tiny + MLM, Classification, Token Classification
   - ✅ **GPT**: GPT-2 (Small/Medium/Large/XL), GPT-3 variants + CausalLM, Classification, Generation
   - ✅ **T5**: Small/Base/Large/3B/11B + Conditional Generation, Classification
-- [ ] Diffusion Models (Stable Diffusion, DALL-E style)
+- [x] Diffusion Models (Stable Diffusion, DALL-E style) - ✅ **IMPLEMENTED**
+  - ✅ **DDPM**: Denoising Diffusion Probabilistic Models
+  - ✅ **Stable Diffusion**: U-Net architecture with noise scheduling
+  - ✅ **Sampling**: Image generation from noise
+  - ✅ **Beta Schedules**: Linear, Cosine, Scaled Linear
+- [ ] Large Language Models (LLaMA, Mistral architectures)
 - [ ] Diffusion Models (Stable Diffusion, DALL-E style)
 - [ ] Large Language Models (LLaMA, Mistral architectures)
 - [ ] Multimodal Models (CLIP, Flamingo)
