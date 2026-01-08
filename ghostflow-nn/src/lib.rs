@@ -25,6 +25,7 @@ pub mod rl;
 pub mod federated;
 pub mod differential_privacy;
 pub mod adversarial;
+pub mod vision_transformer;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -79,6 +80,9 @@ pub use adversarial::{
     AttackConfig, AttackType, AdversarialAttack, AdversarialTrainingConfig,
     AdversarialTrainer, RandomizedSmoothing,
 };
+// pub use vision_transformer::{
+//     VisionTransformer, ViTConfig, PatchEmbedding,
+// };
 
 /// Prelude for convenient imports
 pub mod prelude {
