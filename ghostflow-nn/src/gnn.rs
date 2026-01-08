@@ -6,7 +6,7 @@
 //! - GraphSAGE
 //! - Message Passing Neural Networks (MPNN)
 
-use crate::Tensor;
+use ghostflow_core::Tensor;
 use std::collections::HashMap;
 
 /// Graph structure for GNN operations
@@ -177,7 +177,13 @@ impl GATLayer {
     fn attention_coefficients(&self, node_i: &Tensor, node_j: &Tensor) -> f32 {
         // Concatenate features and compute attention
         // e_ij = LeakyReLU(a^T [W*h_i || W*h_j])
-        let concat = Tensor::cat(&[node_i.clone(), node_j.clone()], 0).unwrap();
+        let data_i = node_i.data_f32();
+        let data_j = node_j.data_f32();
+        let mut concat_data = Vec::with_capacity(data_i.len() + data_j.len());
+        concat_data.extend_from_slice(&data_i);
+        concat_data.extend_from_slice(&data_j);
+        
+        let concat = Tensor::from_slice(&concat_data, &[data_i.len() + data_j.len()]).unwrap();
         let score = concat.matmul(&self.attention_weight).unwrap();
         
         // LeakyReLU with alpha=0.2

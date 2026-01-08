@@ -7,7 +7,7 @@
 //! - Secure aggregation
 //! - Differential privacy
 
-use crate::Tensor;
+use ghostflow_core::Tensor;
 use std::collections::HashMap;
 use rand::Rng;
 

@@ -133,6 +133,9 @@ pub mod gpu;
 // NOTE: Deep module has compilation issues - disabled for now
 // pub mod deep;
 
+// Neural Architecture Search
+pub mod nas;
+
 // Re-exports: Trees
 pub use tree::{DecisionTreeClassifier, DecisionTreeRegressor, Criterion};
 
@@ -319,6 +322,11 @@ pub use distributed::{
 pub use gpu::{
     DeviceType, DeviceInfo, GPUContext, GPUTensor, GPUOps,
     GPUMemoryManager, AutoMixedPrecision,
+};
+
+// Re-exports: Neural Architecture Search
+pub use nas::{
+    Operation, Cell, DARTS, ENAS, ProgressiveNAS, HardwareAwareNAS,
 };
 
 

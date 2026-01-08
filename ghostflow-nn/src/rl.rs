@@ -7,7 +7,7 @@
 //! - Proximal Policy Optimization (PPO)
 //! - Deep Deterministic Policy Gradient (DDPG)
 
-use crate::Tensor;
+use ghostflow_core::Tensor;
 use std::collections::VecDeque;
 use rand::Rng;
 
