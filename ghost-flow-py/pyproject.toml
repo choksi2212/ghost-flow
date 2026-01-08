@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "ghost-flow"
-version = "0.5.0"
+version = "1.0.0"
 description = "Complete ML framework in Rust - 85+ algorithms with quantization and distributed training"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -14,7 +14,7 @@ authors = [
     { name = "GhostFlow Team" }
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
