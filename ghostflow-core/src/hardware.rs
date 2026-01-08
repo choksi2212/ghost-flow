@@ -140,48 +140,60 @@ pub fn list_devices() -> Vec<HardwareDevice> {
     // Check for CUDA devices
     #[cfg(feature = "cuda")]
     {
-        if let Ok(count) = cuda_device_count() {
-            for i in 0..count {
-                if let Ok(device) = HardwareDevice::cuda(i) {
-                    devices.push(device);
+        match crate::cuda::get_device_count() {
+            Ok(count) => {
+                for i in 0..count {
+                    if let Ok(device) = HardwareDevice::cuda(i) {
+                        devices.push(device);
+                    }
                 }
             }
+            Err(_) => {}
         }
     }
     
     // Check for ROCm devices
     #[cfg(feature = "rocm")]
     {
-        if let Ok(count) = rocm_device_count() {
-            for i in 0..count {
-                if let Ok(device) = HardwareDevice::rocm(i) {
-                    devices.push(device);
+        match crate::rocm::RocmDevice::device_count() {
+            Ok(count) => {
+                for i in 0..count {
+                    if let Ok(device) = HardwareDevice::rocm(i) {
+                        devices.push(device);
+                    }
                 }
             }
+            Err(_) => {}
         }
     }
     
     // Check for Metal devices
     #[cfg(feature = "metal")]
     {
-        if let Ok(count) = metal_device_count() {
-            for i in 0..count {
-                if let Ok(device) = HardwareDevice::metal(i) {
-                    devices.push(device);
+        match crate::metal::MetalDevice::device_count() {
+            Ok(count) => {
+                for i in 0..count {
+                    if let Ok(device) = HardwareDevice::metal(i) {
+                        devices.push(device);
+                    }
                 }
             }
+            Err(_) => {}
         }
     }
     
     // Check for TPU devices
     #[cfg(feature = "tpu")]
     {
-        if let Ok(count) = tpu_device_count() {
-            for i in 0..count {
-                if let Ok(device) = HardwareDevice::tpu(i) {
-                    devices.push(device);
+        match crate::tpu::TpuDevice::device_count() {
+            Ok(count) => {
+                for i in 0..count {
+                    if let Ok(device) = HardwareDevice::tpu(i) {
+                        devices.push(device);
+                    }
                 }
             }
+            Err(_) => {}
         }
     }
     
@@ -237,11 +249,43 @@ pub enum ElementwiseOp {
 impl HardwareOps for Tensor {
     fn matmul_hw(&self, other: &Tensor, device: &HardwareDevice) -> Result<Tensor> {
         match device.backend {
-            HardwareBackend::CPU => self.matmul(other),
+            HardwareBackend::CPU => {
+                // Use optimized CPU implementation with SIMD if available
+                #[cfg(target_arch = "aarch64")]
+                {
+                    // Use NEON on ARM
+                    let a_data = self.data_f32();
+                    let b_data = other.data_f32();
+                    let dims_a = self.dims();
+                    let dims_b = other.dims();
+                    
+                    if dims_a.len() != 2 || dims_b.len() != 2 {
+                        return Err(GhostError::InvalidShape("matmul requires 2D tensors".to_string()));
+                    }
+                    
+                    let (m, k) = (dims_a[0], dims_a[1]);
+                    let (k2, n) = (dims_b[0], dims_b[1]);
+                    
+                    if k != k2 {
+                        return Err(GhostError::ShapeMismatch {
+                            expected: vec![k],
+                            got: vec![k2],
+                        });
+                    }
+                    
+                    let mut result = vec![0.0f32; m * n];
+                    crate::neon::matmul_neon(&a_data, &b_data, &mut result, m, n, k);
+                    Tensor::from_slice(&result, &[m, n])
+                }
+                #[cfg(not(target_arch = "aarch64"))]
+                {
+                    self.matmul(other)
+                }
+            }
             HardwareBackend::CUDA => {
                 #[cfg(feature = "cuda")]
                 {
-                    cuda_matmul(self, other, device.device_id)
+                    crate::cuda::ops::matmul_cuda(self, other, device.device_id)
                 }
                 #[cfg(not(feature = "cuda"))]
                 {
@@ -251,7 +295,7 @@ impl HardwareOps for Tensor {
             HardwareBackend::ROCm => {
                 #[cfg(feature = "rocm")]
                 {
-                    rocm_matmul(self, other, device.device_id)
+                    crate::rocm::ops::matmul_rocm(self, other, device.device_id)
                 }
                 #[cfg(not(feature = "rocm"))]
                 {
@@ -261,7 +305,7 @@ impl HardwareOps for Tensor {
             HardwareBackend::Metal => {
                 #[cfg(feature = "metal")]
                 {
-                    metal_matmul(self, other, device.device_id)
+                    crate::metal::mps::matmul_mps(self, other, device.device_id)
                 }
                 #[cfg(not(feature = "metal"))]
                 {
@@ -271,7 +315,7 @@ impl HardwareOps for Tensor {
             HardwareBackend::TPU => {
                 #[cfg(feature = "tpu")]
                 {
-                    tpu_matmul(self, other, device.device_id)
+                    crate::tpu::ops::matmul_tpu(self, other, device.device_id)
                 }
                 #[cfg(not(feature = "tpu"))]
                 {
@@ -295,14 +339,76 @@ impl HardwareOps for Tensor {
     fn elementwise_hw(&self, op: ElementwiseOp, device: &HardwareDevice) -> Result<Tensor> {
         match device.backend {
             HardwareBackend::CPU => {
-                match op {
-                    ElementwiseOp::ReLU => Ok(self.relu()),
-                    ElementwiseOp::Sigmoid => Ok(self.sigmoid()),
-                    ElementwiseOp::Tanh => Ok(self.tanh()),
-                    _ => Err(GhostError::NotImplemented("CPU elementwise".to_string())),
+                #[cfg(target_arch = "aarch64")]
+                {
+                    // Use NEON optimizations on ARM
+                    match op {
+                        ElementwiseOp::ReLU => Ok(self.relu_neon()),
+                        ElementwiseOp::Sigmoid => {
+                            let mut data = self.data_f32();
+                            crate::neon::sigmoid_neon(&mut data);
+                            Tensor::from_slice(&data, self.dims())
+                        }
+                        ElementwiseOp::Tanh => Ok(self.tanh()),
+                        ElementwiseOp::Add | ElementwiseOp::Mul => {
+                            Err(GhostError::InvalidOperation("Binary op requires two tensors".to_string()))
+                        }
+                    }
+                }
+                #[cfg(not(target_arch = "aarch64"))]
+                {
+                    match op {
+                        ElementwiseOp::ReLU => Ok(self.relu()),
+                        ElementwiseOp::Sigmoid => Ok(self.sigmoid()),
+                        ElementwiseOp::Tanh => Ok(self.tanh()),
+                        ElementwiseOp::Add | ElementwiseOp::Mul => {
+                            Err(GhostError::InvalidOperation("Binary op requires two tensors".to_string()))
+                        }
+                    }
                 }
             }
-            _ => Err(GhostError::NotImplemented("Hardware elementwise".to_string())),
+            HardwareBackend::CUDA => {
+                #[cfg(feature = "cuda")]
+                {
+                    match op {
+                        ElementwiseOp::ReLU => crate::cuda::ops::relu_cuda(self, device.device_id),
+                        _ => Err(GhostError::NotImplemented("CUDA elementwise op".to_string())),
+                    }
+                }
+                #[cfg(not(feature = "cuda"))]
+                {
+                    Err(GhostError::DeviceError("CUDA not available".to_string()))
+                }
+            }
+            HardwareBackend::ROCm => {
+                #[cfg(feature = "rocm")]
+                {
+                    match op {
+                        ElementwiseOp::ReLU => crate::rocm::ops::relu_rocm(self, device.device_id),
+                        _ => Err(GhostError::NotImplemented("ROCm elementwise op".to_string())),
+                    }
+                }
+                #[cfg(not(feature = "rocm"))]
+                {
+                    Err(GhostError::DeviceError("ROCm not available".to_string()))
+                }
+            }
+            HardwareBackend::Metal => {
+                #[cfg(feature = "metal")]
+                {
+                    match op {
+                        ElementwiseOp::ReLU => crate::metal::mps::relu_mps(self, device.device_id),
+                        _ => Err(GhostError::NotImplemented("Metal elementwise op".to_string())),
+                    }
+                }
+                #[cfg(not(feature = "metal"))]
+                {
+                    Err(GhostError::DeviceError("Metal not available".to_string()))
+                }
+            }
+            HardwareBackend::TPU => {
+                Err(GhostError::NotImplemented("TPU elementwise ops".to_string()))
+            }
         }
     }
 }

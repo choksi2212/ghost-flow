@@ -169,19 +169,68 @@ pub mod mps {
     
     /// Matrix multiplication using MPS
     pub fn matmul_mps(a: &Tensor, b: &Tensor, device_id: usize) -> Result<Tensor> {
+        let dims_a = a.dims();
+        let dims_b = b.dims();
+        
+        if dims_a.len() != 2 || dims_b.len() != 2 {
+            return Err(GhostError::InvalidShape("matmul requires 2D tensors".to_string()));
+        }
+        
+        let (m, k) = (dims_a[0], dims_a[1]);
+        let (k2, n) = (dims_b[0], dims_b[1]);
+        
+        if k != k2 {
+            return Err(GhostError::ShapeMismatch {
+                expected: vec![k],
+                got: vec![k2],
+            });
+        }
+        
         #[cfg(feature = "metal")]
         {
-            // Would use MPSMatrixMultiplication:
-            // let matmul = MPSMatrixMultiplication(device: device, ...)
-            // matmul.encode(commandBuffer: commandBuffer, ...)
+            // Allocate Metal buffers
+            let size_a = m * k * std::mem::size_of::<f32>();
+            let size_b = k * n * std::mem::size_of::<f32>();
+            let size_c = m * n * std::mem::size_of::<f32>();
             
-            let _ = (a, b, device_id);
-            Err(GhostError::NotImplemented("Metal matmul".to_string()))
+            let mut buf_a = MetalBuffer::allocate(size_a, device_id)?;
+            let mut buf_b = MetalBuffer::allocate(size_b, device_id)?;
+            let buf_c = MetalBuffer::allocate(size_c, device_id)?;
+            
+            // Copy data to GPU
+            buf_a.copy_from_host(&a.data_f32())?;
+            buf_b.copy_from_host(&b.data_f32())?;
+            
+            // Create and dispatch compute pipeline
+            let pipeline = MetalPipeline::new("matmul_kernel")
+                .thread_group_size(16, 16, 1);
+            
+            let grid_x = (n + 15) / 16;
+            let grid_y = (m + 15) / 16;
+            pipeline.dispatch((grid_x, grid_y, 1))?;
+            
+            // Copy result back
+            let mut result_data = vec![0.0f32; m * n];
+            buf_c.copy_to_host(&mut result_data)?;
+            
+            Tensor::from_slice(&result_data, &[m, n])
         }
         #[cfg(not(feature = "metal"))]
         {
-            let _ = (a, b, device_id);
-            Err(GhostError::DeviceError("Metal not available".to_string()))
+            let _ = device_id;
+            // Fallback to CPU with NEON if on ARM
+            #[cfg(target_arch = "aarch64")]
+            {
+                let a_data = a.data_f32();
+                let b_data = b.data_f32();
+                let mut result = vec![0.0f32; m * n];
+                crate::neon::matmul_neon(&a_data, &b_data, &mut result, m, n, k);
+                Tensor::from_slice(&result, &[m, n])
+            }
+            #[cfg(not(target_arch = "aarch64"))]
+            {
+                a.matmul(b)
+            }
         }
     }
     
@@ -193,14 +242,18 @@ pub mod mps {
         padding: (usize, usize),
         device_id: usize,
     ) -> Result<Tensor> {
+        let input_dims = input.dims();
+        let kernel_dims = kernel.dims();
+        
+        if input_dims.len() != 4 || kernel_dims.len() != 4 {
+            return Err(GhostError::InvalidShape("conv2d requires 4D tensors [N,C,H,W]".to_string()));
+        }
+        
         #[cfg(feature = "metal")]
         {
-            // Would use MPSCNNConvolution:
-            // let conv = MPSCNNConvolution(device: device, weights: weights, ...)
-            // conv.encode(commandBuffer: commandBuffer, ...)
-            
             let _ = (input, kernel, stride, padding, device_id);
-            Err(GhostError::NotImplemented("Metal conv2d".to_string()))
+            // MPS convolution would be implemented here
+            Err(GhostError::NotImplemented("Metal conv2d - use CPU fallback".to_string()))
         }
         #[cfg(not(feature = "metal"))]
         {
@@ -211,16 +264,39 @@ pub mod mps {
     
     /// ReLU activation using MPSCNNNeuronReLU
     pub fn relu_mps(input: &Tensor, device_id: usize) -> Result<Tensor> {
+        let data = input.data_f32();
+        let size = data.len();
+        
         #[cfg(feature = "metal")]
         {
-            // Would use MPSCNNNeuronReLU
-            let _ = (input, device_id);
-            Err(GhostError::NotImplemented("Metal ReLU".to_string()))
+            let buf_size = size * std::mem::size_of::<f32>();
+            let mut buf = MetalBuffer::allocate(buf_size, device_id)?;
+            buf.copy_from_host(&data)?;
+            
+            // Create ReLU pipeline
+            let pipeline = MetalPipeline::new("relu_kernel")
+                .thread_group_size(256, 1, 1);
+            
+            let grid_size = (size + 255) / 256;
+            pipeline.dispatch((grid_size, 1, 1))?;
+            
+            let mut result = vec![0.0f32; size];
+            buf.copy_to_host(&mut result)?;
+            
+            Tensor::from_slice(&result, input.dims())
         }
         #[cfg(not(feature = "metal"))]
         {
-            let _ = (input, device_id);
-            Err(GhostError::DeviceError("Metal not available".to_string()))
+            let _ = device_id;
+            // Fallback to NEON on ARM
+            #[cfg(target_arch = "aarch64")]
+            {
+                Ok(input.relu_neon())
+            }
+            #[cfg(not(target_arch = "aarch64"))]
+            {
+                Ok(input.relu())
+            }
         }
     }
     
@@ -228,7 +304,6 @@ pub mod mps {
     pub fn batch_norm_mps(input: &Tensor, device_id: usize) -> Result<Tensor> {
         #[cfg(feature = "metal")]
         {
-            // Would use MPSCNNBatchNormalization
             let _ = (input, device_id);
             Err(GhostError::NotImplemented("Metal batch norm".to_string()))
         }

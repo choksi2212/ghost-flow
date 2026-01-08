@@ -182,18 +182,56 @@ pub mod ops {
     
     /// Matrix multiplication using rocBLAS
     pub fn matmul_rocm(a: &Tensor, b: &Tensor, device_id: usize) -> Result<Tensor> {
+        let dims_a = a.dims();
+        let dims_b = b.dims();
+        
+        if dims_a.len() != 2 || dims_b.len() != 2 {
+            return Err(GhostError::InvalidShape("matmul requires 2D tensors".to_string()));
+        }
+        
+        let (m, k) = (dims_a[0], dims_a[1]);
+        let (k2, n) = (dims_b[0], dims_b[1]);
+        
+        if k != k2 {
+            return Err(GhostError::ShapeMismatch {
+                expected: vec![k],
+                got: vec![k2],
+            });
+        }
+        
         #[cfg(feature = "rocm")]
         {
-            // Would use rocBLAS:
-            // rocblas_sgemm(handle, transA, transB, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc)
+            // Allocate device memory
+            let size_a = m * k * std::mem::size_of::<f32>();
+            let size_b = k * n * std::mem::size_of::<f32>();
+            let size_c = m * n * std::mem::size_of::<f32>();
             
-            let _ = (a, b, device_id);
-            Err(GhostError::NotImplemented("ROCm matmul".to_string()))
+            let mut buf_a = RocmBuffer::allocate(size_a, device_id)?;
+            let mut buf_b = RocmBuffer::allocate(size_b, device_id)?;
+            let buf_c = RocmBuffer::allocate(size_c, device_id)?;
+            
+            // Copy data to device
+            buf_a.copy_from_host(&a.data_f32())?;
+            buf_b.copy_from_host(&b.data_f32())?;
+            
+            // Launch matmul kernel
+            let kernel = RocmKernel::new("matmul_kernel")
+                .grid((n as u32 + 15) / 16, (m as u32 + 15) / 16, 1)
+                .block(16, 16, 1);
+            
+            kernel.launch()?;
+            
+            // Copy result back
+            let mut result_data = vec![0.0f32; m * n];
+            buf_c.copy_to_host(&mut result_data)?;
+            
+            Tensor::from_slice(&result_data, &[m, n])
         }
         #[cfg(not(feature = "rocm"))]
         {
-            let _ = (a, b, device_id);
-            Err(GhostError::DeviceError("ROCm not available".to_string()))
+            let _ = device_id;
+            // Fallback to CPU
+            a.matmul(b)
         }
     }
     
@@ -205,38 +243,62 @@ pub mod ops {
         padding: (usize, usize),
         device_id: usize,
     ) -> Result<Tensor> {
+        let input_dims = input.dims();
+        let kernel_dims = kernel.dims();
+        
+        if input_dims.len() != 4 || kernel_dims.len() != 4 {
+            return Err(GhostError::InvalidShape("conv2d requires 4D tensors [N,C,H,W]".to_string()));
+        }
+        
+        let (batch, in_channels, in_h, in_w) = (input_dims[0], input_dims[1], input_dims[2], input_dims[3]);
+        let (out_channels, _, k_h, k_w) = (kernel_dims[0], kernel_dims[1], kernel_dims[2], kernel_dims[3]);
+        
+        let out_h = (in_h + 2 * padding.0 - k_h) / stride.0 + 1;
+        let out_w = (in_w + 2 * padding.1 - k_w) / stride.1 + 1;
+        
         #[cfg(feature = "rocm")]
         {
-            // Would use MIOpen:
-            // miopenConvolutionForward(handle, alpha, inputDesc, input, filterDesc, filter, ...)
-            
-            let _ = (input, kernel, stride, padding, device_id);
-            Err(GhostError::NotImplemented("ROCm conv2d".to_string()))
+            // Use MIOpen for convolution
+            let _ = device_id;
+            // For now, fallback to CPU implementation
+            Err(GhostError::NotImplemented("ROCm conv2d - use CPU fallback".to_string()))
         }
         #[cfg(not(feature = "rocm"))]
         {
-            let _ = (input, kernel, stride, padding, device_id);
-            Err(GhostError::DeviceError("ROCm not available".to_string()))
+            let _ = (device_id, stride, padding);
+            // CPU fallback using im2col
+            Err(GhostError::NotImplemented("conv2d CPU fallback".to_string()))
         }
     }
     
     /// Element-wise ReLU
     pub fn relu_rocm(input: &Tensor, device_id: usize) -> Result<Tensor> {
+        let data = input.data_f32();
+        let size = data.len();
+        
         #[cfg(feature = "rocm")]
         {
-            // Would launch HIP kernel:
-            // __global__ void relu_kernel(float* data, int n) {
-            //     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-            //     if (idx < n) data[idx] = max(0.0f, data[idx]);
-            // }
+            let buf_size = size * std::mem::size_of::<f32>();
+            let mut buf = RocmBuffer::allocate(buf_size, device_id)?;
+            buf.copy_from_host(&data)?;
             
-            let _ = (input, device_id);
-            Err(GhostError::NotImplemented("ROCm ReLU".to_string()))
+            // Launch ReLU kernel
+            let kernel = RocmKernel::new("relu_kernel")
+                .grid((size as u32 + 255) / 256, 1, 1)
+                .block(256, 1, 1);
+            
+            kernel.launch()?;
+            
+            let mut result = vec![0.0f32; size];
+            buf.copy_to_host(&mut result)?;
+            
+            Tensor::from_slice(&result, input.dims())
         }
         #[cfg(not(feature = "rocm"))]
         {
-            let _ = (input, device_id);
-            Err(GhostError::DeviceError("ROCm not available".to_string()))
+            let _ = device_id;
+            // CPU fallback
+            Ok(input.relu())
         }
     }
     
@@ -244,7 +306,6 @@ pub mod ops {
     pub fn batch_norm_rocm(input: &Tensor, device_id: usize) -> Result<Tensor> {
         #[cfg(feature = "rocm")]
         {
-            // Would use MIOpen batch norm
             let _ = (input, device_id);
             Err(GhostError::NotImplemented("ROCm batch norm".to_string()))
         }

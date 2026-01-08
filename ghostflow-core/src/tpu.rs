@@ -219,20 +219,50 @@ pub mod ops {
     
     /// Matrix multiplication on TPU
     pub fn matmul_tpu(a: &Tensor, b: &Tensor, device_id: usize) -> Result<Tensor> {
+        let dims_a = a.dims();
+        let dims_b = b.dims();
+        
+        if dims_a.len() != 2 || dims_b.len() != 2 {
+            return Err(GhostError::InvalidShape("matmul requires 2D tensors".to_string()));
+        }
+        
+        let (m, k) = (dims_a[0], dims_a[1]);
+        let (k2, n) = (dims_b[0], dims_b[1]);
+        
+        if k != k2 {
+            return Err(GhostError::ShapeMismatch {
+                expected: vec![k],
+                got: vec![k2],
+            });
+        }
+        
         #[cfg(feature = "tpu")]
         {
-            // Would use XLA matmul:
-            // auto computation = xla::XlaBuilder("matmul")
-            // auto result = xla::Dot(a, b)
-            // Execute on TPU
+            // Build XLA computation
+            let mut computation = xla::XlaComputation::new("matmul");
+            let input_a = 0;
+            let input_b = 1;
+            let matmul_op = xla::XlaOp::MatMul { lhs: input_a, rhs: input_b };
+            computation.add_op(matmul_op);
             
-            let _ = (a, b, device_id);
-            Err(GhostError::NotImplemented("TPU matmul".to_string()))
+            // Compile for TPU
+            let compiled = computation.compile(device_id)?;
+            
+            // Execute
+            let inputs = vec![a.clone(), b.clone()];
+            let outputs = compiled.execute(&inputs)?;
+            
+            if outputs.is_empty() {
+                return Err(GhostError::DeviceError("TPU execution failed".to_string()));
+            }
+            
+            Ok(outputs[0].clone())
         }
         #[cfg(not(feature = "tpu"))]
         {
-            let _ = (a, b, device_id);
-            Err(GhostError::DeviceError("TPU not available".to_string()))
+            let _ = device_id;
+            // Fallback to CPU
+            a.matmul(b)
         }
     }
     
@@ -246,9 +276,22 @@ pub mod ops {
     ) -> Result<Tensor> {
         #[cfg(feature = "tpu")]
         {
-            // Would use XLA convolution
-            let _ = (input, kernel, stride, padding, device_id);
-            Err(GhostError::NotImplemented("TPU conv2d".to_string()))
+            // Build XLA convolution
+            let mut computation = xla::XlaComputation::new("conv2d");
+            let input_id = 0;
+            let kernel_id = 1;
+            let conv_op = xla::XlaOp::Conv2D { input: input_id, kernel: kernel_id };
+            computation.add_op(conv_op);
+            
+            let compiled = computation.compile(device_id)?;
+            let inputs = vec![input.clone(), kernel.clone()];
+            let outputs = compiled.execute(&inputs)?;
+            
+            if outputs.is_empty() {
+                return Err(GhostError::DeviceError("TPU execution failed".to_string()));
+            }
+            
+            Ok(outputs[0].clone())
         }
         #[cfg(not(feature = "tpu"))]
         {
@@ -259,16 +302,66 @@ pub mod ops {
     
     /// Batch matrix multiplication (optimized for TPU)
     pub fn batch_matmul_tpu(a: &Tensor, b: &Tensor, device_id: usize) -> Result<Tensor> {
+        let dims_a = a.dims();
+        let dims_b = b.dims();
+        
+        if dims_a.len() != 3 || dims_b.len() != 3 {
+            return Err(GhostError::InvalidShape("batch_matmul requires 3D tensors [B,M,K] x [B,K,N]".to_string()));
+        }
+        
+        let (batch, m, k) = (dims_a[0], dims_a[1], dims_a[2]);
+        let (batch2, k2, n) = (dims_b[0], dims_b[1], dims_b[2]);
+        
+        if batch != batch2 || k != k2 {
+            return Err(GhostError::ShapeMismatch {
+                expected: vec![batch, k],
+                got: vec![batch2, k2],
+            });
+        }
+        
         #[cfg(feature = "tpu")]
         {
-            // TPUs excel at batch operations
-            let _ = (a, b, device_id);
-            Err(GhostError::NotImplemented("TPU batch matmul".to_string()))
+            // TPUs are optimized for batch operations
+            let mut computation = xla::XlaComputation::new("batch_matmul");
+            let input_a = 0;
+            let input_b = 1;
+            let matmul_op = xla::XlaOp::MatMul { lhs: input_a, rhs: input_b };
+            computation.add_op(matmul_op);
+            
+            let compiled = computation.compile(device_id)?;
+            let inputs = vec![a.clone(), b.clone()];
+            let outputs = compiled.execute(&inputs)?;
+            
+            if outputs.is_empty() {
+                return Err(GhostError::DeviceError("TPU execution failed".to_string()));
+            }
+            
+            Ok(outputs[0].clone())
         }
         #[cfg(not(feature = "tpu"))]
         {
-            let _ = (a, b, device_id);
-            Err(GhostError::DeviceError("TPU not available".to_string()))
+            let _ = device_id;
+            // CPU fallback - process each batch element
+            let mut result_data = Vec::with_capacity(batch * m * n);
+            let a_data = a.data_f32();
+            let b_data = b.data_f32();
+            
+            for b_idx in 0..batch {
+                let a_offset = b_idx * m * k;
+                let b_offset = b_idx * k * n;
+                
+                for i in 0..m {
+                    for j in 0..n {
+                        let mut sum = 0.0;
+                        for p in 0..k {
+                            sum += a_data[a_offset + i * k + p] * b_data[b_offset + p * n + j];
+                        }
+                        result_data.push(sum);
+                    }
+                }
+            }
+            
+            Tensor::from_slice(&result_data, &[batch, m, n])
         }
     }
     
@@ -281,14 +374,19 @@ pub mod ops {
     ) -> Result<Tensor> {
         #[cfg(feature = "tpu")]
         {
-            // TPUs are optimized for transformer workloads
+            // TPUs excel at transformer workloads
             let _ = (query, key, value, device_id);
-            Err(GhostError::NotImplemented("TPU attention".to_string()))
+            Err(GhostError::NotImplemented("TPU attention - use CPU fallback".to_string()))
         }
         #[cfg(not(feature = "tpu"))]
         {
             let _ = (query, key, value, device_id);
-            Err(GhostError::DeviceError("TPU not available".to_string()))
+            // CPU fallback: Q @ K^T / sqrt(d_k), then softmax, then @ V
+            let d_k = query.dims()[query.dims().len() - 1] as f32;
+            let key_t = key.t()?;
+            let scores = query.matmul(&key_t)?.div_scalar(d_k.sqrt());
+            let attn_weights = scores.softmax(-1);
+            attn_weights.matmul(value)
         }
     }
 }
