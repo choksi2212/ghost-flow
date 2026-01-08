@@ -3,12 +3,12 @@
 //! Implements dynamic computation graphs (like PyTorch) where the graph
 //! is built on-the-fly during forward pass.
 
-use crate::Tensor;
+use ghostflow_core::Tensor;
 use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
 
 /// Node in the dynamic computation graph
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct GraphNode {
     /// Unique node ID
     pub id: usize,
@@ -22,7 +22,20 @@ pub struct GraphNode {
     pub backward_fn: Option<Arc<dyn Fn(&[Tensor]) -> Vec<Tensor> + Send + Sync>>,
 }
 
+impl std::fmt::Debug for GraphNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("GraphNode")
+            .field("id", &self.id)
+            .field("op", &self.op)
+            .field("inputs", &self.inputs)
+            .field("output", &self.output)
+            .field("backward_fn", &self.backward_fn.is_some())
+            .finish()
+    }
+}
+
 /// Dynamic computation graph
+#[derive(Debug)]
 pub struct DynamicGraph {
     /// All nodes in the graph
     nodes: Arc<Mutex<HashMap<usize, GraphNode>>>,

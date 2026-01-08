@@ -232,9 +232,9 @@ pub unsafe extern "C" fn ghostflow_tensor_add(
         None => return GhostFlowError::NullPointer,
     };
 
-    match tensor_a + tensor_b {
+    match tensor_a.add(&tensor_b) {
         Ok(result) => {
-            *out = tensor_to_ptr(result);
+            unsafe { *out = tensor_to_ptr(result); }
             GhostFlowError::Success
         }
         Err(_) => GhostFlowError::ComputationFailed,
@@ -262,9 +262,9 @@ pub unsafe extern "C" fn ghostflow_tensor_mul(
         None => return GhostFlowError::NullPointer,
     };
 
-    match tensor_a * tensor_b {
+    match tensor_a.mul(&tensor_b) {
         Ok(result) => {
-            *out = tensor_to_ptr(result);
+            unsafe { *out = tensor_to_ptr(result); }
             GhostFlowError::Success
         }
         Err(_) => GhostFlowError::ComputationFailed,
