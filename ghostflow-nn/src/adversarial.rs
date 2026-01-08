@@ -62,35 +62,34 @@ impl AdversarialAttack {
     
     /// Generate adversarial example using FGSM
     pub fn fgsm(&self, input: &Tensor, gradient: &Tensor) -> Result<Tensor, String> {
-        let input_data = input.data();
-        let grad_data = gradient.data();
+        let input_data = input.data_f32();
+        let grad_data = gradient.data_f32();
         
         if input_data.len() != grad_data.len() {
             return Err("Input and gradient dimensions must match".to_string());
         }
         
         // Compute perturbation: epsilon * sign(gradient)
-        let mut perturbed = Vec::with_capacity(input_data.len());
-        for (&x, &g) in input_data.iter().zip(grad_data.iter()) {
+        let perturbed: Vec<f32> = input_data.iter().zip(grad_data.iter()).map(|(&x, &g)| {
             let sign = if g > 0.0 { 1.0 } else if g < 0.0 { -1.0 } else { 0.0 };
             let perturbed_x = x + self.config.epsilon * sign;
             // Clip to valid range [0, 1]
-            perturbed.push(perturbed_x.max(0.0).min(1.0));
-        }
+            perturbed_x.max(0.0).min(1.0)
+        }).collect();
         
-        Tensor::from_vec(perturbed, input.shape().to_vec())
+        Tensor::from_slice(&perturbed, input.dims())
+            .map_err(|e| format!("Failed to create perturbed tensor: {:?}", e))
     }
     
     /// Generate adversarial example using PGD
     pub fn pgd(&self, input: &Tensor, compute_gradient: impl Fn(&Tensor) -> Result<Tensor, String>) 
         -> Result<Tensor, String> {
-        let mut perturbed = input.clone();
-        let input_data = input.data();
+        let input_data = input.data_f32();
+        let mut perturbed_data = input_data.clone();
         
         // Random initialization within epsilon ball
         if self.config.random_init {
             let mut rng = rand::thread_rng();
-            let perturbed_data = perturbed.data_mut();
             for (p, &x) in perturbed_data.iter_mut().zip(input_data.iter()) {
                 let noise: f32 = rng.gen_range(-self.config.epsilon..self.config.epsilon);
                 *p = (x + noise).max(0.0).min(1.0);
@@ -99,10 +98,13 @@ impl AdversarialAttack {
         
         // Iterative FGSM
         for _ in 0..self.config.num_iterations {
+            // Create tensor from current perturbed data
+            let perturbed = Tensor::from_slice(&perturbed_data, input.dims())
+                .map_err(|e| format!("Failed to create tensor: {:?}", e))?;
+            
             // Compute gradient
             let gradient = compute_gradient(&perturbed)?;
-            let grad_data = gradient.data();
-            let perturbed_data = perturbed.data_mut();
+            let grad_data = gradient.data_f32();
             
             // Update perturbation
             for (p, &g) in perturbed_data.iter_mut().zip(grad_data.iter()) {
@@ -111,7 +113,6 @@ impl AdversarialAttack {
             }
             
             // Project back to epsilon ball around original input
-            let perturbed_data = perturbed.data_mut();
             for (p, &x) in perturbed_data.iter_mut().zip(input_data.iter()) {
                 // Clip perturbation to epsilon ball
                 let delta = (*p - x).max(-self.config.epsilon).min(self.config.epsilon);
@@ -119,21 +120,26 @@ impl AdversarialAttack {
             }
         }
         
-        Ok(perturbed)
+        Tensor::from_slice(&perturbed_data, input.dims())
+            .map_err(|e| format!("Failed to create final tensor: {:?}", e))
     }
     
     /// Generate adversarial example using C&W attack
     pub fn cw(&self, input: &Tensor, target_class: usize, 
               compute_logits: impl Fn(&Tensor) -> Result<Tensor, String>) 
         -> Result<Tensor, String> {
-        let mut perturbed = input.clone();
-        let input_data = input.data();
+        let input_data = input.data_f32();
+        let mut perturbed_data = input_data.clone();
         let c = 1.0; // Confidence parameter
         
         for _ in 0..self.config.num_iterations {
+            // Create tensor from current perturbed data
+            let perturbed = Tensor::from_slice(&perturbed_data, input.dims())
+                .map_err(|e| format!("Failed to create tensor: {:?}", e))?;
+            
             // Compute logits
             let logits = compute_logits(&perturbed)?;
-            let logits_data = logits.data();
+            let logits_data = logits.data_f32();
             
             if logits_data.len() <= target_class {
                 return Err("Invalid target class".to_string());
@@ -150,7 +156,6 @@ impl AdversarialAttack {
             let loss = (max_other - target_logit + c).max(0.0);
             
             // Gradient approximation (simplified)
-            let perturbed_data = perturbed.data_mut();
             for (p, &x) in perturbed_data.iter_mut().zip(input_data.iter()) {
                 let grad_sign = if loss > 0.0 { 1.0 } else { -1.0 };
                 *p -= self.config.step_size * grad_sign;
@@ -161,7 +166,8 @@ impl AdversarialAttack {
             }
         }
         
-        Ok(perturbed)
+        Tensor::from_slice(&perturbed_data, input.dims())
+            .map_err(|e| format!("Failed to create final tensor: {:?}", e))
     }
     
     /// Generate adversarial example using DeepFool
@@ -169,17 +175,21 @@ impl AdversarialAttack {
                     compute_gradient: impl Fn(&Tensor, usize) -> Result<Tensor, String>,
                     num_classes: usize) 
         -> Result<Tensor, String> {
-        let mut perturbed = input.clone();
-        let input_data = input.data();
+        let input_data = input.data_f32();
+        let mut perturbed_data = input_data.clone();
         
         for _ in 0..self.config.num_iterations {
             let mut min_distance = f32::INFINITY;
             let mut best_perturbation = vec![0.0; input_data.len()];
             
+            // Create tensor from current perturbed data
+            let perturbed = Tensor::from_slice(&perturbed_data, input.dims())
+                .map_err(|e| format!("Failed to create tensor: {:?}", e))?;
+            
             // Find minimal perturbation to cross decision boundary
             for class in 0..num_classes {
                 let gradient = compute_gradient(&perturbed, class)?;
-                let grad_data = gradient.data();
+                let grad_data = gradient.data_f32();
                 
                 // Compute distance to decision boundary
                 let grad_norm: f32 = grad_data.iter().map(|g| g * g).sum::<f32>().sqrt();
@@ -196,14 +206,14 @@ impl AdversarialAttack {
             }
             
             // Apply perturbation
-            let perturbed_data = perturbed.data_mut();
             for (p, (&x, &delta)) in perturbed_data.iter_mut()
                 .zip(input_data.iter().zip(best_perturbation.iter())) {
                 *p = (x + delta).max(0.0).min(1.0);
             }
         }
         
-        Ok(perturbed)
+        Tensor::from_slice(&perturbed_data, input.dims())
+            .map_err(|e| format!("Failed to create final tensor: {:?}", e))
     }
 }
 
@@ -265,7 +275,7 @@ impl AdversarialTrainer {
     
     /// Apply label smoothing for robustness
     pub fn smooth_labels(&self, labels: &Tensor, num_classes: usize) -> Result<Tensor, String> {
-        let label_data = labels.data();
+        let label_data = labels.data_f32();
         let smoothing = self.config.label_smoothing;
         let mut smoothed = Vec::with_capacity(label_data.len() * num_classes);
         
@@ -284,7 +294,8 @@ impl AdversarialTrainer {
             }
         }
         
-        Tensor::from_vec(smoothed, vec![label_data.len(), num_classes])
+        Tensor::from_slice(&smoothed, &[label_data.len(), num_classes])
+            .map_err(|e| format!("Failed to create smoothed labels: {:?}", e))
     }
 }
 
@@ -313,18 +324,18 @@ impl RandomizedSmoothing {
                    model_predict: impl Fn(&Tensor) -> Result<usize, String>)
         -> Result<usize, String> {
         let mut rng = rand::thread_rng();
-        let input_data = input.data();
+        let input_data = input.data_f32();
         let mut class_counts = std::collections::HashMap::new();
         
         // Sample predictions with Gaussian noise
         for _ in 0..self.num_samples {
-            let mut noisy_input = Vec::with_capacity(input_data.len());
-            for &x in input_data.iter() {
+            let noisy_input: Vec<f32> = input_data.iter().map(|&x| {
                 let noise: f32 = rng.gen::<f32>() * self.sigma;
-                noisy_input.push((x + noise).max(0.0).min(1.0));
-            }
+                (x + noise).max(0.0).min(1.0)
+            }).collect();
             
-            let noisy_tensor = Tensor::from_vec(noisy_input, input.shape().to_vec())?;
+            let noisy_tensor = Tensor::from_slice(&noisy_input, input.dims())
+                .map_err(|e| format!("Failed to create noisy tensor: {:?}", e))?;
             let pred = model_predict(&noisy_tensor)?;
             *class_counts.entry(pred).or_insert(0) += 1;
         }
@@ -344,17 +355,17 @@ impl RandomizedSmoothing {
         
         // Compute lower bound on probability of predicted class
         let mut rng = rand::thread_rng();
-        let input_data = input.data();
+        let input_data = input.data_f32();
         let mut correct_count = 0;
         
         for _ in 0..self.num_samples {
-            let mut noisy_input = Vec::with_capacity(input_data.len());
-            for &x in input_data.iter() {
+            let noisy_input: Vec<f32> = input_data.iter().map(|&x| {
                 let noise: f32 = rng.gen::<f32>() * self.sigma;
-                noisy_input.push((x + noise).max(0.0).min(1.0));
-            }
+                (x + noise).max(0.0).min(1.0)
+            }).collect();
             
-            let noisy_tensor = Tensor::from_vec(noisy_input, input.shape().to_vec())?;
+            let noisy_tensor = Tensor::from_slice(&noisy_input, input.dims())
+                .map_err(|e| format!("Failed to create noisy tensor: {:?}", e))?;
             let pred = model_predict(&noisy_tensor)?;
             if pred == predicted_class {
                 correct_count += 1;
@@ -387,11 +398,11 @@ mod tests {
         };
         let attack = AdversarialAttack::new(config);
         
-        let input = Tensor::from_vec(vec![0.5, 0.5, 0.5, 0.5], vec![4]).unwrap();
-        let gradient = Tensor::from_vec(vec![1.0, -1.0, 0.5, -0.5], vec![4]).unwrap();
+        let input = Tensor::from_slice(&[0.5, 0.5, 0.5, 0.5], &[4]).unwrap();
+        let gradient = Tensor::from_slice(&[1.0, -1.0, 0.5, -0.5], &[4]).unwrap();
         
         let adv = attack.fgsm(&input, &gradient).unwrap();
-        let adv_data = adv.data();
+        let adv_data = adv.data_f32();
         
         // Check perturbation is applied correctly
         assert!((adv_data[0] - 0.6).abs() < 1e-5); // 0.5 + 0.1 * sign(1.0)
@@ -406,11 +417,11 @@ mod tests {
         };
         let trainer = AdversarialTrainer::new(config);
         
-        let labels = Tensor::from_vec(vec![0.0, 1.0, 2.0], vec![3]).unwrap();
+        let labels = Tensor::from_slice(&[0.0, 1.0, 2.0], &[3]).unwrap();
         let smoothed = trainer.smooth_labels(&labels, 3).unwrap();
         
-        assert_eq!(smoothed.shape(), &[3, 3]);
-        let data = smoothed.data();
+        assert_eq!(smoothed.dims(), &[3, 3]);
+        let data = smoothed.data_f32();
         
         // Check first label (class 0)
         assert!((data[0] - 0.9).abs() < 1e-5); // 1.0 - 0.1
@@ -422,7 +433,7 @@ mod tests {
     fn test_randomized_smoothing() {
         let smoothing = RandomizedSmoothing::new(0.1, 100, 0.05);
         
-        let input = Tensor::from_vec(vec![0.5; 10], vec![10]).unwrap();
+        let input = Tensor::from_slice(&[0.5; 10], &[10]).unwrap();
         
         // Mock model that always predicts class 0
         let model = |_: &Tensor| Ok(0);

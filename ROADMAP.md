@@ -167,8 +167,8 @@ This document outlines what's currently implemented and what's planned for futur
 ### Research Features
 - [x] Neural architecture search - ✅ **COMPLETED** (DARTS, ENAS, Progressive NAS, Hardware-aware NAS)
 - [x] AutoML capabilities - ✅ **COMPLETED** (Model selection, hyperparameter tuning, ensemble creation, meta-learning)
-- [ ] Differential privacy - 🚧 **IN PROGRESS** (Implementation complete, needs Tensor API fixes)
-- [ ] Adversarial training - 🚧 **IN PROGRESS** (Implementation complete, needs Tensor API fixes)
+- [x] Differential privacy - ✅ **COMPLETED** (DP-SGD, Privacy accountant, PATE, Local DP)
+- [x] Adversarial training - ✅ **COMPLETED** (FGSM, PGD, C&W, DeepFool, Randomized smoothing)
 
 ---
 

@@ -134,8 +134,8 @@ impl DPSGDOptimizer {
     }
     
     /// Clip gradients to bound sensitivity
-    pub fn clip_gradients(&self, gradients: &mut Tensor) -> Result<(), String> {
-        let grad_data = gradients.data_mut();
+    pub fn clip_gradients(&self, gradients: &Tensor) -> Result<Tensor, String> {
+        let grad_data = gradients.data_f32();
         
         // Compute L2 norm of gradients
         let mut norm_sq = 0.0f32;
@@ -145,19 +145,20 @@ impl DPSGDOptimizer {
         let norm = norm_sq.sqrt();
         
         // Clip if norm exceeds threshold
-        if norm > self.config.clip_norm {
+        let clipped_data = if norm > self.config.clip_norm {
             let scale = self.config.clip_norm / norm;
-            for g in grad_data.iter_mut() {
-                *g *= scale;
-            }
-        }
+            grad_data.iter().map(|&g| g * scale).collect()
+        } else {
+            grad_data
+        };
         
-        Ok(())
+        Tensor::from_slice(&clipped_data, gradients.dims())
+            .map_err(|e| format!("Failed to create clipped tensor: {:?}", e))
     }
     
     /// Add calibrated Gaussian noise to gradients
-    pub fn add_noise(&mut self, gradients: &mut Tensor) -> Result<(), String> {
-        let grad_data = gradients.data_mut();
+    pub fn add_noise(&mut self, gradients: &Tensor) -> Result<Tensor, String> {
+        let grad_data = gradients.data_f32();
         
         // Compute noise scale
         let noise_scale = self.config.clip_norm * self.config.noise_multiplier;
@@ -165,26 +166,27 @@ impl DPSGDOptimizer {
             .map_err(|e| format!("Failed to create normal distribution: {}", e))?;
         
         // Add Gaussian noise to each gradient
-        for g in grad_data.iter_mut() {
+        let noisy_data: Vec<f32> = grad_data.iter().map(|&g| {
             let noise = normal.sample(&mut self.rng) as f32;
-            *g += noise;
-        }
+            g + noise
+        }).collect();
         
-        Ok(())
+        Tensor::from_slice(&noisy_data, gradients.dims())
+            .map_err(|e| format!("Failed to create noisy tensor: {:?}", e))
     }
     
     /// Process gradients with DP-SGD (clip + noise)
-    pub fn process_gradients(&mut self, gradients: &mut Tensor) -> Result<(), String> {
+    pub fn process_gradients(&mut self, gradients: &Tensor) -> Result<Tensor, String> {
         // Step 1: Clip gradients
-        self.clip_gradients(gradients)?;
+        let clipped = self.clip_gradients(gradients)?;
         
         // Step 2: Add noise
-        self.add_noise(gradients)?;
+        let noisy = self.add_noise(&clipped)?;
         
         // Step 3: Update privacy accountant
         self.accountant.step();
         
-        Ok(())
+        Ok(noisy)
     }
     
     /// Check if training should stop due to privacy budget
@@ -353,11 +355,11 @@ mod tests {
         };
         let optimizer = DPSGDOptimizer::new(config);
         
-        let mut gradients = Tensor::from_vec(vec![2.0, 3.0, 4.0], vec![3]);
-        optimizer.clip_gradients(&mut gradients).unwrap();
+        let gradients = Tensor::from_slice(&[2.0, 3.0, 4.0], &[3]).unwrap();
+        let clipped = optimizer.clip_gradients(&gradients).unwrap();
         
         // Check that norm is clipped to 1.0
-        let data = gradients.data();
+        let data = clipped.data_f32();
         let norm: f32 = data.iter().map(|x| x * x).sum::<f32>().sqrt();
         assert!((norm - 1.0).abs() < 1e-5);
     }

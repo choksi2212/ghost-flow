@@ -23,9 +23,8 @@ pub mod inference;
 pub mod gnn;
 pub mod rl;
 pub mod federated;
-// TODO: Fix Tensor API usage
-// pub mod differential_privacy;
-// pub mod adversarial;
+pub mod differential_privacy;
+pub mod adversarial;
 
 pub use module::Module;
 pub use linear::Linear;
@@ -73,14 +72,13 @@ pub use inference::{
     InferenceConfig, InferenceOptimizer, InferenceSession,
     BatchInference, warmup_model,
 };
-// TODO: Fix Tensor API usage
-// pub use differential_privacy::{
-//     DPConfig, PrivacyAccountant, DPSGDOptimizer, PATEEnsemble, LocalDP,
-// };
-// pub use adversarial::{
-//     AttackConfig, AttackType, AdversarialAttack, AdversarialTrainingConfig,
-//     AdversarialTrainer, RandomizedSmoothing,
-// };
+pub use differential_privacy::{
+    DPConfig, PrivacyAccountant, DPSGDOptimizer, PATEEnsemble, LocalDP,
+};
+pub use adversarial::{
+    AttackConfig, AttackType, AdversarialAttack, AdversarialTrainingConfig,
+    AdversarialTrainer, RandomizedSmoothing,
+};
 
 /// Prelude for convenient imports
 pub mod prelude {

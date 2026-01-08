@@ -1,6 +1,6 @@
 [package]
 name = "ghost-flow"
-version = "0.5.0"
+version = "1.0.0"
 edition = "2021"
 description = "Complete machine learning framework in Rust - tensors, neural networks, and 85+ ML algorithms with quantization and distributed training"
 license = "MIT OR Apache-2.0"
