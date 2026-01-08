@@ -269,7 +269,8 @@ Have suggestions for the roadmap?
 
 #### State-of-the-Art Models
 - [x] Vision Transformers (ViT, DeiT, Swin) - ✅ **ViT IMPLEMENTED** (Base, Large, Huge configurations)
-- [ ] BERT, GPT, T5 implementations
+- [x] BERT, GPT, T5 implementations - ✅ **BERT IMPLEMENTED** (Base, Large, Tiny + MLM, Classification, Token Classification)
+- [ ] GPT, T5 implementations
 - [ ] Diffusion Models (Stable Diffusion, DALL-E style)
 - [ ] Large Language Models (LLaMA, Mistral architectures)
 - [ ] Multimodal Models (CLIP, Flamingo)
