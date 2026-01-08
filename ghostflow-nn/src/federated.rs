@@ -36,7 +36,7 @@ impl FederatedClient {
     }
     
     /// Perform local training
-    pub fn local_train(&mut self, num_epochs: usize, batch_size: usize) {
+    pub fn local_train(&mut self, num_epochs: usize, _batch_size: usize) {
         // Simplified local training
         // In practice, this would train on local data
         for _ in 0..num_epochs {

@@ -432,7 +432,7 @@ impl Module for Conv3d {
             }
         }
         
-        let mut result = Tensor::from_slice(&output, &[batch, self.out_channels, out_depth, out_height, out_width]).unwrap();
+        let result = Tensor::from_slice(&output, &[batch, self.out_channels, out_depth, out_height, out_width]).unwrap();
         
         if let Some(ref bias) = self.bias {
             let bias_data = bias.data_f32();
@@ -583,7 +583,7 @@ impl Module for TransposeConv2d {
             }
         }
         
-        let mut result = Tensor::from_slice(&output, &[batch, self.out_channels, out_height, out_width]).unwrap();
+        let result = Tensor::from_slice(&output, &[batch, self.out_channels, out_height, out_width]).unwrap();
         
         if let Some(ref bias) = self.bias {
             let bias_data = bias.data_f32();

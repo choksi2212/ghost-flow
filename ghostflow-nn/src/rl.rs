@@ -401,7 +401,7 @@ impl ActorCriticAgent {
     }
     
     /// Train on a single step
-    pub fn train_step(&mut self, state: &Tensor, action: usize, reward: f32, next_state: &Tensor, done: bool) -> (f32, f32) {
+    pub fn train_step(&mut self, state: &Tensor, _action: usize, reward: f32, next_state: &Tensor, done: bool) -> (f32, f32) {
         // Compute TD error: δ = r + γ*V(s') - V(s)
         let value = self.critic.forward(state);
         let next_value = if done { 0.0 } else { self.critic.forward(next_state) };

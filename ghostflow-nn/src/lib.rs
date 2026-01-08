@@ -2,6 +2,8 @@
 //!
 //! High-level building blocks for neural networks.
 
+#![allow(dead_code)]
+
 pub mod module;
 pub mod linear;
 pub mod conv;
@@ -30,6 +32,8 @@ pub mod bert;
 pub mod gpt;
 pub mod t5;
 pub mod diffusion;
+pub mod llama;
+pub mod clip;
 
 pub use module::Module;
 pub use linear::Linear;

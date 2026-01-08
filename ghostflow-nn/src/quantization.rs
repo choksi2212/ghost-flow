@@ -3,7 +3,6 @@
 //! Techniques for reducing model size and improving inference speed
 //! through quantization to lower precision formats.
 
-use crate::module::Module;
 use ghostflow_core::tensor::Tensor;
 use std::collections::HashMap;
 

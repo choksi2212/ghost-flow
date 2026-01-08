@@ -9,7 +9,7 @@
 //! - Next sentence prediction head
 
 use ghostflow_core::Tensor;
-use crate::transformer::{TransformerEncoder, TransformerEncoderLayer};
+use crate::transformer::TransformerEncoder;
 use crate::linear::Linear;
 use crate::norm::LayerNorm;
 use crate::activation::GELU;
@@ -350,7 +350,7 @@ impl BertModel {
     
     /// Forward pass
     pub fn forward(&self, input_ids: &Tensor, token_type_ids: Option<&Tensor>, 
-                   attention_mask: Option<&Tensor>) -> Result<BertOutput, String> {
+                   _attention_mask: Option<&Tensor>) -> Result<BertOutput, String> {
         // Get embeddings
         let embedding_output = self.embeddings.forward(input_ids, token_type_ids)?;
         

@@ -278,10 +278,20 @@ Have suggestions for the roadmap?
   - ✅ **Stable Diffusion**: U-Net architecture with noise scheduling
   - ✅ **Sampling**: Image generation from noise
   - ✅ **Beta Schedules**: Linear, Cosine, Scaled Linear
-- [ ] Large Language Models (LLaMA, Mistral architectures)
-- [ ] Diffusion Models (Stable Diffusion, DALL-E style)
-- [ ] Large Language Models (LLaMA, Mistral architectures)
-- [ ] Multimodal Models (CLIP, Flamingo)
+- [x] Large Language Models (LLaMA, Mistral architectures) - ✅ **LLaMA IMPLEMENTED**
+  - ✅ **LLaMA**: 7B, 13B, 30B, 65B models
+  - ✅ **LLaMA 2**: 7B, 13B, 70B with Grouped Query Attention
+  - ✅ **RMSNorm**: Root Mean Square Layer Normalization
+  - ✅ **RoPE**: Rotary Position Embeddings
+  - ✅ **SwiGLU**: Activation function
+  - ✅ **GQA**: Grouped Query Attention for efficiency
+- [x] Multimodal Models (CLIP, Flamingo) - ✅ **CLIP IMPLEMENTED**
+  - ✅ **CLIP**: Contrastive Language-Image Pre-training
+  - ✅ **Vision Encoder**: ViT-based image encoding
+  - ✅ **Text Encoder**: Transformer-based text encoding
+  - ✅ **Zero-shot Classification**: Image classification without training
+  - ✅ **Image-Text Retrieval**: Find matching images for text and vice versa
+  - ✅ **Variants**: ViT-B/32, ViT-B/16, ViT-L/14
 - [ ] Neural Radiance Fields (NeRF)
 - [ ] 3D Vision Models (Point Cloud, Mesh processing)
 

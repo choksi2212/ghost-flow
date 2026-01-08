@@ -7,7 +7,7 @@
 //! - Classification head
 
 use ghostflow_core::Tensor;
-use crate::transformer::{TransformerEncoder, PositionalEncoding};
+use crate::transformer::TransformerEncoder;
 use crate::linear::Linear;
 use crate::norm::LayerNorm;
 use crate::Module;

@@ -3,7 +3,6 @@
 //! This module provides functionality to export GhostFlow models to ONNX format
 //! and import ONNX models into GhostFlow.
 
-use crate::Module;
 use ghostflow_core::{Result, Tensor, GhostError};
 use std::collections::HashMap;
 use std::fs::File;

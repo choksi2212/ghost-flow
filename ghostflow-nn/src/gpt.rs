@@ -11,7 +11,6 @@ use ghostflow_core::Tensor;
 use crate::transformer::TransformerEncoder;
 use crate::linear::Linear;
 use crate::norm::LayerNorm;
-use crate::activation::GELU;
 use crate::Module;
 
 /// GPT configuration
@@ -193,7 +192,6 @@ impl GPTEmbeddings {
             return Err(format!("Expected 2D input_ids, got {}D", dims.len()));
         }
         
-        let batch_size = dims[0];
         let seq_length = dims[1];
         
         if seq_length > self.config.context_length {
