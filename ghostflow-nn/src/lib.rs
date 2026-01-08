@@ -34,6 +34,9 @@ pub mod t5;
 pub mod diffusion;
 pub mod llama;
 pub mod clip;
+pub mod nerf;
+pub mod point_cloud;
+pub mod mesh;
 
 pub use module::Module;
 pub use linear::Linear;
