@@ -28,6 +28,7 @@ pub mod adversarial;
 pub mod vision_transformer;
 pub mod bert;
 pub mod gpt;
+pub mod t5;
 
 pub use module::Module;
 pub use linear::Linear;
