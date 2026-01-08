@@ -27,6 +27,7 @@ pub mod differential_privacy;
 pub mod adversarial;
 pub mod vision_transformer;
 pub mod bert;
+pub mod gpt;
 
 pub use module::Module;
 pub use linear::Linear;
