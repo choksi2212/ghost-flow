@@ -136,6 +136,9 @@ pub mod gpu;
 // Neural Architecture Search
 pub mod nas;
 
+// AutoML
+pub mod automl;
+
 // Re-exports: Trees
 pub use tree::{DecisionTreeClassifier, DecisionTreeRegressor, Criterion};
 
@@ -328,5 +331,14 @@ pub use gpu::{
 pub use nas::{
     Operation, Cell, DARTS, ENAS, ProgressiveNAS, HardwareAwareNAS,
 };
+
+// Re-exports: AutoML
+// Note: AutoML types can be accessed via ghostflow_ml::automl::*
+// pub use automl::{
+//     AutoML, AutoMLConfig, OptimizationMetric,
+// };
+// pub use automl::{
+//     ModelType, TrainedModel, TaskType, MetaLearner,
+// };
 
 
