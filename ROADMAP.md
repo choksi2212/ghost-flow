@@ -268,10 +268,12 @@ Have suggestions for the roadmap?
 ### Phase 1: Advanced Deep Learning (Q2-Q3 2026)
 
 #### State-of-the-Art Models
-- [x] Vision Transformers (ViT, DeiT, Swin) - ✅ **ViT IMPLEMENTED** (Base, Large, Huge configurations)
-- [x] BERT, GPT, T5 implementations - ✅ **BERT IMPLEMENTED** (Base, Large, Tiny + MLM, Classification, Token Classification)
-- [x] GPT, T5 implementations - ✅ **GPT IMPLEMENTED** (GPT-2 Small/Medium/Large/XL, GPT-3 variants + CausalLM, Classification, Text Generation)
-- [ ] T5 implementations
+- [x] Vision Transformers (ViT, DeiT, Swin) - ✅ **ViT IMPLEMENTED** (Base, Large, Huge)
+- [x] BERT, GPT, T5 implementations - ✅ **ALL IMPLEMENTED**
+  - ✅ **BERT**: Base, Large, Tiny + MLM, Classification, Token Classification
+  - ✅ **GPT**: GPT-2 (Small/Medium/Large/XL), GPT-3 variants + CausalLM, Classification, Generation
+  - ✅ **T5**: Small/Base/Large/3B/11B + Conditional Generation, Classification
+- [ ] Diffusion Models (Stable Diffusion, DALL-E style)
 - [ ] Diffusion Models (Stable Diffusion, DALL-E style)
 - [ ] Large Language Models (LLaMA, Mistral architectures)
 - [ ] Multimodal Models (CLIP, Flamingo)
