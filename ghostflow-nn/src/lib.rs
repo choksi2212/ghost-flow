@@ -26,6 +26,7 @@ pub mod federated;
 pub mod differential_privacy;
 pub mod adversarial;
 pub mod vision_transformer;
+pub mod bert;
 
 pub use module::Module;
 pub use linear::Linear;
