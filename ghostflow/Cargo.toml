@@ -1,8 +1,8 @@
 [package]
 name = "ghost-flow"
-version = "1.1.0"
+version = "1.1.1"
 edition = "2021"
-description = "Complete machine learning framework in Rust - tensors, neural networks, and 85+ ML algorithms with quantization and distributed training"
+description = "Complete machine learning framework in Rust - tensors, neural networks, 85+ ML algorithms, GPU acceleration, WASM, FFI, and model serving - all included by default"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/choksi2212/ghost-flow"
 homepage = "https://github.com/choksi2212/ghost-flow"
@@ -12,7 +12,7 @@ categories = ["science", "algorithms"]
 readme = "../README.md"
 
 [features]
-default = ["nn", "ml", "autograd", "optim", "data", "simd", "cuda"]
+default = ["nn", "ml", "autograd", "optim", "data", "simd", "cuda", "ffi", "wasm", "serve"]
 # Core features
 simd = ["ghostflow-core/simd"]
 cuda = ["dep:ghostflow-cuda"]
