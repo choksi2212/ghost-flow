@@ -12,18 +12,21 @@ categories = ["science", "algorithms"]
 readme = "../README.md"
 
 [features]
-default = ["nn", "ml", "autograd", "optim", "data"]
+default = ["nn", "ml", "autograd", "optim", "data", "simd", "cuda"]
 # Core features
 simd = ["ghostflow-core/simd"]
-cuda = ["ghostflow-cuda/cuda"]
+cuda = ["dep:ghostflow-cuda"]
 # Module features
 nn = ["dep:ghostflow-nn"]
 ml = ["dep:ghostflow-ml"]
 autograd = ["dep:ghostflow-autograd"]
 optim = ["dep:ghostflow-optim"]
 data = ["dep:ghostflow-data"]
+ffi = ["dep:ghostflow-ffi"]
+wasm = ["dep:ghostflow-wasm"]
+serve = ["dep:ghostflow-serve"]
 # All features
-full = ["nn", "ml", "autograd", "optim", "data", "simd"]
+full = ["nn", "ml", "autograd", "optim", "data", "simd", "cuda", "ffi", "wasm", "serve"]
 
 [dependencies]
 # Core is always included
@@ -36,6 +39,9 @@ ghostflow-autograd = { version = "0.1.0", optional = true }
 ghostflow-optim = { version = "0.1.0", optional = true }
 ghostflow-data = { version = "0.1.0", optional = true }
 ghostflow-cuda = { version = "0.1.0", optional = true }
+ghostflow-ffi = { version = "1.0.0", optional = true }
+ghostflow-wasm = { version = "1.0.0", optional = true }
+ghostflow-serve = { version = "1.0.0", optional = true }
 
 [[example]]
 name = "new_layers_demo"

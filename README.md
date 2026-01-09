@@ -11,7 +11,7 @@
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-success.svg)]()
 [![Downloads](https://img.shields.io/pypi/dm/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
-[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)]()
+[![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)]()
 
 **9 State-of-the-Art Models • 85+ ML Algorithms • 10 Advanced Training Techniques • Multimodal AI • 3D Vision • Production Ready**
 
@@ -524,7 +524,7 @@ cargo test --workspace
 
 ## 🎯 Roadmap
 
-### ✅ Current Status: v1.1.0 (Phase 1 Complete! 🎉)
+### ✅ Current Status: v1.2.0 (Advanced Training Techniques Complete! 🎉)
 
 **Core Features:**
 - [x] Core tensor operations with SIMD
