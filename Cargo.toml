@@ -21,7 +21,7 @@ edition = "2021"
 authors = ["GhostFlow Team"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/choksi2212/ghost-flow"
-description = "Next-generation ML framework - faster than TensorFlow and PyTorch"
+description = "Next-generation ML framework with 10 advanced training techniques - faster than TensorFlow and PyTorch"
 
 [profile.release]
 opt-level = 3

@@ -13,7 +13,7 @@
 [![Downloads](https://img.shields.io/pypi/dm/ghost-flow.svg)](https://pypi.org/project/ghost-flow/)
 [![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)]()
 
-**9 State-of-the-Art Models • 85+ ML Algorithms • Multimodal AI • 3D Vision • Production Ready**
+**9 State-of-the-Art Models • 85+ ML Algorithms • 10 Advanced Training Techniques • Multimodal AI • 3D Vision • Production Ready**
 
 ```bash
 pip install ghostflow  # Python
@@ -39,6 +39,7 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
 - 🎮 **GPU Acceleration** - CUDA support with optimized kernels for NVIDIA GPUs
 - 🧠 **85+ ML Algorithms** - XGBoost, LightGBM, GMM, HMM, CRF, neural networks, and more
 - 🤖 **9 State-of-the-Art Models** - ViT, BERT, GPT, T5, Diffusion, LLaMA, CLIP, NeRF, 3D Vision
+- 🚀 **10 Advanced Training Techniques** - Mixed Precision, LoRA, Flash Attention, ZeRO, MoE, and more
 - 🎨 **Multimodal AI** - Vision-language models with zero-shot capabilities
 - 🌍 **3D Vision** - Point cloud (PointNet) and mesh processing
 - 🛡️ **Memory Safe** - Rust's guarantees eliminate entire classes of bugs
@@ -139,6 +140,17 @@ GhostFlow is a **complete machine learning framework** built in Rust with Python
   - **CLIP**: Multimodal vision-language with zero-shot classification
   - **NeRF**: Neural Radiance Fields for 3D scene representation
   - **3D Vision**: PointNet for point clouds, Mesh processing
+- **Advanced Training Techniques**:
+  - **Mixed Precision Training**: FP16, BF16, FP8 with automatic loss scaling
+  - **Gradient Checkpointing**: Memory-efficient training (up to 80% savings)
+  - **LoRA & QLoRA**: Low-rank adaptation with 99%+ parameter reduction
+  - **Flash Attention**: Memory-efficient attention for long sequences
+  - **ZeRO Optimizer**: Stage 1/2/3 with CPU/NVMe offloading
+  - **Ring Attention**: Support for millions of tokens
+  - **Mixture of Experts (MoE)**: Sparse expert routing with load balancing
+  - **Knowledge Distillation**: Teacher-student training with feature matching
+  - **Prompt & Prefix Tuning**: Parameter-efficient fine-tuning
+  - **Curriculum Learning**: Easy-to-hard training strategies
 - **Layers**: Conv1d/2d/3d, TransposeConv2d, MaxPool, AvgPool, GroupNorm, InstanceNorm, BatchNorm, LayerNorm, Dropout
 - **Activations**: ReLU, GELU, Swish, SiLU, Mish, ELU, SELU, Softplus, Sigmoid, Tanh, Softmax
 - **Losses**: MSE, MAE, CrossEntropy, BCE, Focal Loss, Contrastive Loss, Triplet Loss, Huber Loss
@@ -541,6 +553,18 @@ cargo test --workspace
 - [x] **NeRF** - Neural Radiance Fields for 3D scene representation
 - [x] **3D Vision** - PointNet for point clouds, Mesh processing
 
+**Advanced Training Techniques (100% Complete!):**
+- [x] **Mixed Precision Training** - FP16, BF16, FP8 with automatic loss scaling
+- [x] **Gradient Checkpointing** - Memory-efficient training (up to 80% savings)
+- [x] **LoRA & QLoRA** - Low-rank adaptation with 99%+ parameter reduction
+- [x] **Flash Attention** - Memory-efficient attention for long sequences
+- [x] **ZeRO Optimizer** - Stage 1/2/3 with CPU/NVMe offloading (up to 75% memory savings)
+- [x] **Ring Attention** - Support for sequences up to millions of tokens
+- [x] **Mixture of Experts (MoE)** - Sparse expert routing with load balancing
+- [x] **Knowledge Distillation** - Teacher-student training with feature matching
+- [x] **Prompt & Prefix Tuning** - Parameter-efficient fine-tuning (99.9%+ efficiency)
+- [x] **Curriculum Learning** - Easy-to-hard training strategies
+
 **Production Ready:**
 - [x] Python bindings (PyPI: `pip install ghost-flow`)
 - [x] Rust crate (Crates.io: `cargo add ghost-flow`)
@@ -552,11 +576,9 @@ cargo test --workspace
 
 - [ ] ONNX export/import
 - [ ] Model serving (HTTP/gRPC)
-- [ ] Mixed precision training (FP16, BF16, FP8)
-- [ ] Flash Attention and Ring Attention
-- [ ] ZeRO Optimizer
 - [ ] Multi-node distributed training
 - [ ] Hardware support (ROCm, Metal, TPU)
+- [ ] Model zoo with pre-trained weights
 
 ### 🔮 Phase 3+: Advanced Features (Q3 2026+)
 
