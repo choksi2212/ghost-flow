@@ -4,8 +4,8 @@ build-backend = "maturin"
 
 [project]
 name = "ghost-flow"
-version = "1.2.0"
-description = "Complete ML framework in Rust with 10 advanced training techniques - 85+ algorithms with quantization and distributed training"
+version = "1.1.1"
+description = "Complete ML framework in Rust with 10 advanced training techniques, GPU acceleration, WASM, FFI - all included by default"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT OR Apache-2.0" }
