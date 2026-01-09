@@ -37,6 +37,16 @@ pub mod clip;
 pub mod nerf;
 pub mod point_cloud;
 pub mod mesh;
+pub mod mixed_precision;
+pub mod gradient_checkpointing;
+pub mod lora;
+pub mod flash_attention;
+pub mod knowledge_distillation;
+pub mod zero_optimizer;
+pub mod ring_attention;
+pub mod mixture_of_experts;
+pub mod prompt_tuning;
+pub mod curriculum_learning;
 
 pub use module::Module;
 pub use linear::Linear;
